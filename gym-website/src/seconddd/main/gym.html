@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IRONFORGE — Strength & Conditioning</title>
+<style>
+  @font-face {
+    font-family: 'Anton';
+    src: local('Anton');
+  }
+
+  :root{
+    --ink:#121309;
+    --ink-2:#1c1e12;
+    --steel:#7d7d70;
+    --steel-light:#b8b8a9;
+    --paper:#ECEBE1;
+    --volt:#D6FF3F;
+    --volt-dim:#a7c72f;
+    --line: rgba(236,235,225,0.14);
+    --radius: 2px;
+    --serif-display: 'Bebas Neue', 'Anton', Impact, sans-serif;
+    --sans: 'Space Grotesk', 'Inter', -apple-system, sans-serif;
+  }
+
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background:var(--ink);
+    color:var(--paper);
+    font-family:var(--sans);
+    line-height:1.5;
+    overflow-x:hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important; }
+  }
+
+  a{ color:inherit; text-decoration:none; }
+  img{ max-width:100%; display:block; }
+  ul{ list-style:none; }
+
+  .wrap{
+    max-width:1200px;
+    margin:0 auto;
+    padding:0 40px;
+  }
+
+  /* ---------- focus ---------- */
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible{
+    outline:2px solid var(--volt);
+    outline-offset:3px;
+  }
+
+  /* ---------- header ---------- */
+  header{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:100;
+    background:rgba(18,19,9,0.86);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:20px 40px;
+    max-width:1200px;
+    margin:0 auto;
+  }
+  .logo{
+    font-family:var(--serif-display);
+    font-size:26px;
+    letter-spacing:1px;
+  }
+  .logo span{ color:var(--volt); }
+  .nav-links{
+    display:flex;
+    gap:36px;
+    font-size:15px;
+    font-weight:500;
+  }
+  .nav-links a{
+    position:relative;
+    padding-bottom:4px;
+  }
+  .nav-links a::after{
+    content:'';
+    position:absolute;
+    left:0; bottom:0;
+    width:0%;
+    height:2px;
+    background:var(--volt);
+    transition:width .25s ease;
+  }
+  .nav-links a:hover::after{ width:100%; }
+
+  .nav-cta{
+    background:var(--volt);
+    color:var(--ink);
+    font-weight:700;
+    font-size:14px;
+    padding:11px 22px;
+    border-radius:var(--radius);
+    border:none;
+    cursor:pointer;
+    transition:transform .2s ease, background .2s ease;
+  }
+  .nav-cta:hover{ transform:translateY(-2px); background:#e4ff77; }
+
+  .nav-toggle{
+    display:none;
+    background:none;
+    border:none;
+    color:var(--paper);
+    font-size:26px;
+    cursor:pointer;
+  }
+
+  @media (max-width:860px){
+    .nav-links{
+      position:fixed;
+      top:70px; right:0;
+      background:var(--ink-2);
+      flex-direction:column;
+      width:220px;
+      padding:24px;
+      gap:20px;
+      border-left:1px solid var(--line);
+      border-bottom:1px solid var(--line);
+      transform:translateX(100%);
+      transition:transform .3s ease;
+    }
+    .nav-links.open{ transform:translateX(0); }
+    .nav-toggle{ display:block; }
+    .nav-cta{ display:none; }
+  }
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    padding-top:90px;
+    background:
+      repeating-linear-gradient(115deg, transparent 0 68px, var(--line) 68px 69px),
+      var(--ink);
+  }
+
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1.2fr 0.8fr;
+    gap:60px;
+    align-items:center;
+    width:100%;
+  }
+
+  .kicker{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    color:var(--volt);
+    font-weight:600;
+    font-size:14px;
+    margin-bottom:22px;
+    opacity:0;
+    animation:rise .7s ease forwards .1s;
+  }
+  .kicker::before{
+    content:'';
+    width:26px; height:2px;
+    background:var(--volt);
+  }
+
+  .hero h1{
+    font-family:var(--serif-display);
+    font-size:clamp(58px, 8vw, 108px);
+    line-height:0.92;
+    letter-spacing:0.5px;
+    text-transform:uppercase;
+    opacity:0;
+    animation:rise .8s ease forwards .25s;
+  }
+
+  .hero p.lead{
+    max-width:460px;
+    color:var(--steel-light);
+    font-size:18px;
+    margin-top:26px;
+    opacity:0;
+    animation:rise .8s ease forwards .45s;
+  }
+
+  .hero-actions{
+    display:flex;
+    gap:18px;
+    margin-top:38px;
+    opacity:0;
+    animation:rise .8s ease forwards .6s;
+  }
+
+  .btn-primary{
+    background:var(--volt);
+    color:var(--ink);
+    font-weight:700;
+    padding:16px 30px;
+    border-radius:var(--radius);
+    border:none;
+    cursor:pointer;
+    font-size:15px;
+    transition:transform .2s ease;
+  }
+  .btn-primary:hover{ transform:translateY(-3px); }
+
+  .btn-ghost{
+    border:1px solid var(--steel);
+    color:var(--paper);
+    padding:16px 30px;
+    border-radius:var(--radius);
+    background:transparent;
+    cursor:pointer;
+    font-size:15px;
+    transition:border-color .2s ease, background .2s ease;
+  }
+  .btn-ghost:hover{ border-color:var(--volt); background:rgba(214,255,63,0.06); }
+
+  @keyframes rise{
+    from{ opacity:0; transform:translateY(24px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  .hero-stats{
+    display:flex;
+    gap:0;
+    margin-top:56px;
+    border-top:1px solid var(--line);
+    padding-top:26px;
+    max-width:520px;
+    opacity:0;
+    animation:rise .8s ease forwards .8s;
+  }
+  .hero-stats div{
+    flex:1;
+    border-right:1px solid var(--line);
+    padding-right:20px;
+    margin-right:20px;
+  }
+  .hero-stats div:last-child{ border-right:none; }
+  .hero-stats strong{
+    font-family:var(--serif-display);
+    font-size:34px;
+    color:var(--volt);
+    display:block;
+  }
+  .hero-stats span{
+    font-size:13px;
+    color:var(--steel-light);
+  }
+
+  .hero-visual{
+    position:relative;
+    aspect-ratio:3/4;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:
+      radial-gradient(circle at 30% 20%, rgba(214,255,63,0.14), transparent 55%),
+      var(--ink-2);
+    display:flex;
+    align-items:flex-end;
+    padding:26px;
+    overflow:hidden;
+  }
+  .hero-visual svg{ position:absolute; inset:0; width:100%; height:100%; opacity:0.9; }
+  .hero-visual .tag{
+    position:relative;
+    background:var(--ink);
+    border:1px solid var(--line);
+    padding:14px 18px;
+    font-size:13px;
+    color:var(--steel-light);
+  }
+  .hero-visual .tag strong{ color:var(--paper); display:block; font-size:15px; margin-bottom:2px; }
+
+  @media (max-width:900px){
+    .hero-grid{ grid-template-columns:1fr; }
+    .hero-visual{ aspect-ratio:16/10; }
+  }
+
+  /* ---------- section shell ---------- */
+  section{ padding:120px 0; position:relative; }
+  .section-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:40px;
+    margin-bottom:64px;
+    border-bottom:1px solid var(--line);
+    padding-bottom:28px;
+  }
+  .section-head h2{
+    font-family:var(--serif-display);
+    font-size:clamp(36px,4.4vw,56px);
+    text-transform:uppercase;
+    line-height:1;
+  }
+  .section-head p{
+    max-width:340px;
+    color:var(--steel-light);
+    font-size:15px;
+  }
+  @media (max-width:760px){
+    .section-head{ flex-direction:column; align-items:flex-start; }
+  }
+
+  /* ---------- programs ---------- */
+  .programs{ background:var(--ink); }
+  .program-list{
+    display:flex;
+    flex-direction:column;
+  }
+  .program-row{
+    display:grid;
+    grid-template-columns:80px 1fr 220px 40px;
+    align-items:center;
+    gap:24px;
+    padding:30px 0;
+    border-bottom:1px solid var(--line);
+    transition:background .25s ease;
+  }
+  .program-row:hover{ background:rgba(214,255,63,0.04); }
+  .program-num{
+    font-family:var(--serif-display);
+    font-size:22px;
+    color:var(--steel);
+  }
+  .program-name{
+    font-family:var(--serif-display);
+    font-size:clamp(24px,3vw,34px);
+    text-transform:uppercase;
+  }
+  .program-desc{
+    color:var(--steel-light);
+    font-size:14px;
+    max-width:520px;
+    margin-top:6px;
+  }
+  .program-meta{
+    color:var(--steel-light);
+    font-size:14px;
+    text-align:right;
+  }
+  .program-arrow{
+    font-size:22px;
+    color:var(--volt);
+    text-align:right;
+    transition:transform .25s ease;
+  }
+  .program-row:hover .program-arrow{ transform:translateX(6px); }
+  @media (max-width:700px){
+    .program-row{ grid-template-columns:40px 1fr; }
+    .program-meta, .program-arrow{ display:none; }
+  }
+
+  /* ---------- coaches ---------- */
+  .coaches{ background:var(--ink-2); }
+  .coach-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+  }
+  .coach-card{
+    background:var(--ink-2);
+    padding:32px 24px;
+  }
+  .coach-photo{
+    width:100%;
+    aspect-ratio:1;
+    background:
+      linear-gradient(160deg, rgba(214,255,63,0.16), transparent 60%),
+      var(--ink);
+    border:1px solid var(--line);
+    margin-bottom:20px;
+    position:relative;
+  }
+  .coach-photo::after{
+    content:attr(data-initials);
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:var(--serif-display);
+    font-size:44px;
+    color:var(--steel);
+  }
+  .coach-card h3{ font-size:18px; margin-bottom:4px; }
+  .coach-card span{ color:var(--volt); font-size:13px; }
+  .coach-card p{ color:var(--steel-light); font-size:13px; margin-top:12px; }
+  @media (max-width:900px){ .coach-grid{ grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:560px){ .coach-grid{ grid-template-columns:1fr; } }
+
+  /* ---------- pricing ---------- */
+  .pricing{ background:var(--ink); }
+  .price-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:24px;
+  }
+  .price-card{
+    border:1px solid var(--line);
+    padding:40px 32px;
+    border-radius:var(--radius);
+    display:flex;
+    flex-direction:column;
+    background:var(--ink-2);
+  }
+  .price-card.featured{
+    border-color:var(--volt);
+    background:linear-gradient(180deg, rgba(214,255,63,0.08), var(--ink-2) 40%);
+    position:relative;
+  }
+  .price-card.featured::before{
+    content:'MOST JOINED';
+    position:absolute;
+    top:-1px; right:-1px;
+    background:var(--volt);
+    color:var(--ink);
+    font-size:11px;
+    font-weight:700;
+    padding:6px 12px;
+    letter-spacing:0.5px;
+  }
+  .price-tier{ font-size:14px; color:var(--steel-light); margin-bottom:18px; }
+  .price-amount{
+    font-family:var(--serif-display);
+    font-size:52px;
+    margin-bottom:4px;
+  }
+  .price-amount sub{ font-size:15px; color:var(--steel-light); font-family:var(--sans); }
+  .price-card ul{ margin:28px 0 32px; flex:1; }
+  .price-card li{
+    padding:10px 0;
+    border-bottom:1px solid var(--line);
+    font-size:14px;
+    color:var(--steel-light);
+    display:flex;
+    gap:10px;
+  }
+  .price-card li::before{ content:'—'; color:var(--volt); }
+  @media (max-width:900px){ .price-grid{ grid-template-columns:1fr; } }
+
+  /* ---------- results / marquee ---------- */
+  .marquee-wrap{
+    background:var(--volt);
+    color:var(--ink);
+    padding:22px 0;
+    overflow:hidden;
+    white-space:nowrap;
+  }
+  .marquee{
+    display:inline-flex;
+    gap:60px;
+    font-family:var(--serif-display);
+    font-size:28px;
+    text-transform:uppercase;
+    animation:scroll 22s linear infinite;
+  }
+  @keyframes scroll{
+    from{ transform:translateX(0); }
+    to{ transform:translateX(-50%); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .marquee{ animation:none; }
+  }
+
+  /* ---------- testimonials ---------- */
+  .testimonials{ background:var(--ink); }
+  .test-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+  }
+  .test-card{
+    background:var(--ink);
+    padding:36px 30px;
+  }
+  .test-card p{ font-size:16px; color:var(--steel-light); line-height:1.6; }
+  .test-who{ display:flex; align-items:center; gap:12px; margin-top:24px; }
+  .test-avatar{
+    width:40px; height:40px;
+    border-radius:50%;
+    background:var(--ink-2);
+    border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    font-size:13px;
+    font-weight:700;
+    color:var(--volt);
+  }
+  .test-who strong{ font-size:14px; display:block; }
+  .test-who span{ font-size:12px; color:var(--steel); }
+  @media (max-width:900px){ .test-grid{ grid-template-columns:1fr; } }
+
+  /* ---------- CTA / join ---------- */
+  .join{
+    background:var(--ink-2);
+    text-align:left;
+    padding:110px 0;
+  }
+  .join-inner{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:60px;
+    align-items:center;
+  }
+  .join h2{
+    font-family:var(--serif-display);
+    font-size:clamp(38px,5vw,64px);
+    text-transform:uppercase;
+    line-height:1;
+  }
+  .join p{ color:var(--steel-light); margin-top:18px; max-width:420px; }
+
+  form.join-form{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+  .join-form input, .join-form select{
+    background:var(--ink);
+    border:1px solid var(--line);
+    color:var(--paper);
+    padding:15px 16px;
+    font-size:15px;
+    font-family:var(--sans);
+    border-radius:var(--radius);
+  }
+  .join-form input::placeholder{ color:var(--steel); }
+  .join-form button{
+    margin-top:6px;
+  }
+  @media (max-width:900px){ .join-inner{ grid-template-columns:1fr; } }
+
+  /* ---------- footer ---------- */
+  footer{
+    border-top:1px solid var(--line);
+    padding:50px 0 34px;
+    background:var(--ink);
+  }
+  .footer-grid{
+    display:grid;
+    grid-template-columns:1.4fr 1fr 1fr 1fr;
+    gap:40px;
+    margin-bottom:40px;
+  }
+  .footer-grid h4{ font-size:14px; margin-bottom:16px; color:var(--steel-light); }
+  .footer-grid li{ margin-bottom:10px; font-size:14px; }
+  .footer-grid a:hover{ color:var(--volt); }
+  .footer-bottom{
+    display:flex;
+    justify-content:space-between;
+    padding-top:24px;
+    border-top:1px solid var(--line);
+    font-size:13px;
+    color:var(--steel);
+    flex-wrap:wrap;
+    gap:12px;
+  }
+  @media (max-width:760px){ .footer-grid{ grid-template-columns:1fr 1fr; } }
+
+  .reveal{
+    opacity:0;
+    transform:translateY(24px);
+    transition:opacity .6s ease, transform .6s ease;
+  }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="nav">
+    <div class="logo">IRON<span>FORGE</span></div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#programs">Programs</a></li>
+      <li><a href="#coaches">Coaches</a></li>
+      <li><a href="#pricing">Membership</a></li>
+      <li><a href="#reviews">Results</a></li>
+      <li><a href="#join">Join</a></li>
+    </ul>
+    <button class="nav-cta" onclick="document.getElementById('join').scrollIntoView()">Start free trial</button>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">☰</button>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="kicker">PUNE'S STRENGTH LAB</div>
+      <h1>Train like<br>it matters.</h1>
+      <p class="lead">IronForge is a strength and conditioning gym built for people who want measurable progress — not just a membership card. Barbell work, conditioning, and coaching that actually watches your form.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="document.getElementById('join').scrollIntoView()">Book a free session</button>
+        <button class="btn-ghost" onclick="document.getElementById('programs').scrollIntoView()">See programs</button>
+      </div>
+      <div class="hero-stats">
+        <div><strong>1,200+</strong><span>Members trained</span></div>
+        <div><strong>14</strong><span>Certified coaches</span></div>
+        <div><strong>92%</strong><span>Hit their 12-week goal</span></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+        <rect x="40" y="240" width="320" height="14" fill="var(--steel)" opacity="0.5"/>
+        <rect x="20" y="200" width="26" height="94" fill="var(--paper)" opacity="0.8"/>
+        <rect x="354" y="200" width="26" height="94" fill="var(--paper)" opacity="0.8"/>
+        <circle cx="200" cy="150" r="70" stroke="var(--volt)" stroke-width="2" fill="none" opacity="0.5"/>
+        <circle cx="200" cy="150" r="110" stroke="var(--line)" stroke-width="1" fill="none"/>
+        <line x1="0" y1="360" x2="400" y2="360" stroke="var(--line)"/>
+        <line x1="0" y1="400" x2="400" y2="400" stroke="var(--line)"/>
+      </svg>
+      <div class="tag"><strong>Next cohort</strong>Monday · 6:00 AM strength block</div>
+    </div>
+  </div>
+</section>
+
+<section class="programs" id="programs">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Programs</h2>
+      <p>Pick a track based on the outcome you want, not the equipment you think you need.</p>
+    </div>
+    <div class="program-list">
+      <div class="program-row reveal">
+        <div class="program-num">01</div>
+        <div>
+          <div class="program-name">Strength Block</div>
+          <div class="program-desc">Barbell-first programming — squat, bench, deadlift, press — built around 12-week strength cycles with weekly load tracking.</div>
+        </div>
+        <div class="program-meta">4 sessions / week</div>
+        <div class="program-arrow">→</div>
+      </div>
+      <div class="program-row reveal">
+        <div class="program-num">02</div>
+        <div>
+          <div class="program-name">Conditioning</div>
+          <div class="program-desc">Mixed engine work — rowing, sleds, intervals — for people training for output, not aesthetics alone.</div>
+        </div>
+        <div class="program-meta">3 sessions / week</div>
+        <div class="program-arrow">→</div>
+      </div>
+      <div class="program-row reveal">
+        <div class="program-num">03</div>
+        <div>
+          <div class="program-name">Hypertrophy</div>
+          <div class="program-desc">Volume-driven split for muscle growth, with coach-reviewed form checks every session.</div>
+        </div>
+        <div class="program-meta">5 sessions / week</div>
+        <div class="program-arrow">→</div>
+      </div>
+      <div class="program-row reveal">
+        <div class="program-num">04</div>
+        <div>
+          <div class="program-name">Foundations</div>
+          <div class="program-desc">For first-timers — movement screening, technique groundwork, and a plan before you touch heavy weight.</div>
+        </div>
+        <div class="program-meta">2 sessions / week</div>
+        <div class="program-arrow">→</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="coaches" id="coaches">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Your coaches</h2>
+      <p>Every member gets a named coach who reviews their program monthly.</p>
+    </div>
+    <div class="coach-grid">
+      <div class="coach-card">
+        <div class="coach-photo" data-initials="RK"></div>
+        <h3>Ravi Kulkarni</h3>
+        <span>Head of Strength</span>
+        <p>Ex-national powerlifter. Runs the Strength Block cohorts.</p>
+      </div>
+      <div class="coach-card">
+        <div class="coach-photo" data-initials="SP"></div>
+        <h3>Sanya Patil</h3>
+        <span>Conditioning Lead</span>
+        <p>Builds engine-work programming for endurance athletes.</p>
+      </div>
+      <div class="coach-card">
+        <div class="coach-photo" data-initials="AJ"></div>
+        <h3>Arjun Joshi</h3>
+        <span>Hypertrophy Coach</span>
+        <p>Specializes in physique programming and nutrition timing.</p>
+      </div>
+      <div class="coach-card">
+        <div class="coach-photo" data-initials="MD"></div>
+        <h3>Meher Deshpande</h3>
+        <span>Foundations Coach</span>
+        <p>Onboards every new member with a movement screen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="marquee-wrap">
+  <div class="marquee">
+    <span>NO CONTRACTS</span><span>◆</span>
+    <span>FREE FORM CHECKS</span><span>◆</span>
+    <span>OPEN 5AM – 11PM</span><span>◆</span>
+    <span>NO CONTRACTS</span><span>◆</span>
+    <span>FREE FORM CHECKS</span><span>◆</span>
+    <span>OPEN 5AM – 11PM</span><span>◆</span>
+  </div>
+</div>
+
+<section class="pricing" id="pricing">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Membership</h2>
+      <p>Cancel anytime. No joining fee for annual plans.</p>
+    </div>
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="price-tier">Drop-in</div>
+        <div class="price-amount">₹999<sub>/session</sub></div>
+        <ul>
+          <li>Access to open gym floor</li>
+          <li>One program review</li>
+          <li>Locker & shower access</li>
+        </ul>
+        <button class="btn-ghost">Choose Drop-in</button>
+      </div>
+      <div class="price-card featured">
+        <div class="price-tier">Monthly</div>
+        <div class="price-amount">₹4,499<sub>/month</sub></div>
+        <ul>
+          <li>Unlimited coached sessions</li>
+          <li>Monthly program review</li>
+          <li>Access to all four tracks</li>
+          <li>Progress tracking dashboard</li>
+        </ul>
+        <button class="btn-primary">Choose Monthly</button>
+      </div>
+      <div class="price-card">
+        <div class="price-tier">Annual</div>
+        <div class="price-amount">₹39,999<sub>/year</sub></div>
+        <ul>
+          <li>Everything in Monthly</li>
+          <li>2 free personal training sessions</li>
+          <li>Priority cohort scheduling</li>
+        </ul>
+        <button class="btn-ghost">Choose Annual</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="testimonials" id="reviews">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>What members say</h2>
+      <p>Real feedback from the last three cohorts.</p>
+    </div>
+    <div class="test-grid">
+      <div class="test-card">
+        <p>"I've trained at four gyms in Pune. This is the first one where a coach actually corrected my deadlift form every single session."</p>
+        <div class="test-who">
+          <div class="test-avatar">NK</div>
+          <div><strong>Neha Kale</strong><span>Member since 2024</span></div>
+        </div>
+      </div>
+      <div class="test-card">
+        <p>"The Strength Block program got my squat up by 30kg in twelve weeks. The tracking dashboard kept me honest."</p>
+        <div class="test-who">
+          <div class="test-avatar">VS</div>
+          <div><strong>Vikram Shah</strong><span>Member since 2023</span></div>
+        </div>
+      </div>
+      <div class="test-card">
+        <p>"Foundations track was exactly what I needed as a complete beginner. No judgment, just a clear plan."</p>
+        <div class="test-who">
+          <div class="test-avatar">PD</div>
+          <div><strong>Priya Deshmukh</strong><span>Member since 2025</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="join" id="join">
+  <div class="wrap join-inner">
+    <div>
+      <h2>Your first session is free.</h2>
+      <p>Tell us where you're starting from and we'll match you with a coach and a track before you set foot on the floor.</p>
+    </div>
+    <form class="join-form" onsubmit="return handleJoin(event)">
+      <input type="text" placeholder="Full name" required>
+      <input type="tel" placeholder="Phone number" required>
+      <select required>
+        <option value="" disabled selected>Choose a track</option>
+        <option>Strength Block</option>
+        <option>Conditioning</option>
+        <option>Hypertrophy</option>
+        <option>Foundations</option>
+      </select>
+      <button type="submit" class="btn-primary">Book my free session</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="logo" style="margin-bottom:14px;">IRON<span>FORGE</span></div>
+        <p style="color:var(--steel-light); font-size:14px; max-width:280px;">A strength and conditioning gym in Pune, built around coaching, not just equipment.</p>
+      </div>
+      <div>
+        <h4>Gym</h4>
+        <ul>
+          <li><a href="#programs">Programs</a></li>
+          <li><a href="#coaches">Coaches</a></li>
+          <li><a href="#pricing">Membership</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Visit</h4>
+        <ul>
+          <li>Baner Road, Pune</li>
+          <li>Open 5:00 AM – 11:00 PM</li>
+          <li>+91 98765 43210</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Follow</h4>
+        <ul>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">YouTube</a></li>
+          <li><a href="#">WhatsApp</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 IronForge Strength Lab.</span>
+      <span>Built for people who show up.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // mobile nav toggle
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+
+  // scroll reveal for program rows
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting){
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => io.observe(el));
+
+  // join form handler (demo only, no backend)
+  function handleJoin(e){
+    e.preventDefault();
+    const btn = e.target.querySelector('button');
+    const original = btn.textContent;
+    btn.textContent = 'Request sent — we\'ll call you';
+    btn.disabled = true;
+    setTimeout(() => { btn.textContent = original; btn.disabled = false; e.target.reset(); }, 3000);
+    return false;
+  }
+</script>
+
+</body>
+</html>

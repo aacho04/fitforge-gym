@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PowerFit Gym</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', sans-serif; background: #0d0d0d; color: #fff; }
+a { text-decoration: none; cursor: pointer; }
+
+.navbar {
+  display: flex; justify-content: space-between; align-items: center;
+  background: #0d0d0d; padding: 18px 40px; border-bottom: 1px solid #262626;
+  position: sticky; top: 0; z-index: 100;
+}
+.navbar .logo { font-size: 24px; font-weight: 700; color: #fff; letter-spacing: 1px; }
+.navbar .logo span { color: #ff4c29; }
+.nav-links { display: flex; gap: 26px; align-items: center; flex-wrap: wrap; }
+.nav-links a { color: #ccc; font-size: 15px; font-weight: 500; }
+.nav-links a:hover, .nav-links a.active { color: #ff4c29; }
+.nav-links button {
+  background: #ff4c29; color: white; border: none; padding: 9px 20px;
+  border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 14px;
+}
+.menu-toggle { display: none; font-size: 26px; background: none; border: none; color: white; cursor: pointer; }
+
+.btn-primary {
+  background: #ff4c29; color: white; border: none; padding: 12px 30px;
+  border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 15px; display: inline-block;
+}
+.btn-primary:disabled { background: #444; color: #999; cursor: not-allowed; }
+.btn-outline {
+  background: transparent; color: white; border: 2px solid #ff4c29; padding: 10px 28px;
+  border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 15px; display: inline-block;
+}
+.btn-outline:disabled { border-color: #444; color: #777; cursor: not-allowed; }
+.btn-small { padding: 7px 16px; font-size: 13px; }
+
+.hero {
+  background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)),
+    url('https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1600') center/cover no-repeat;
+  min-height: 85vh; display: flex; flex-direction: column; justify-content: center;
+  align-items: center; text-align: center; padding: 40px 20px;
+}
+.hero h1 { font-size: 48px; font-weight: 700; max-width: 800px; line-height: 1.2; margin-bottom: 20px; }
+.hero h1 span { color: #ff4c29; }
+.hero p { font-size: 18px; color: #ddd; max-width: 550px; margin-bottom: 30px; }
+.hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+
+.features {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px; padding: 70px 60px; background: #111;
+}
+.feature-card {
+  background: #1a1a1a; padding: 30px 24px; border-radius: 10px; text-align: center;
+  border: 1px solid #262626; transition: transform 0.2s, border 0.2s;
+}
+.feature-card:hover { transform: translateY(-5px); border-color: #ff4c29; }
+.feature-card .icon { font-size: 36px; margin-bottom: 16px; }
+.feature-card h3 { font-size: 18px; margin-bottom: 10px; }
+.feature-card p { font-size: 14px; color: #aaa; line-height: 1.6; }
+
+.cta { background: #ff4c29; text-align: center; padding: 60px 20px; }
+.cta h2 { font-size: 30px; margin-bottom: 12px; }
+.cta p { font-size: 16px; margin-bottom: 24px; color: #fff2ef; }
+.cta .btn-primary { background: #0d0d0d; }
+
+.section-title { text-align: center; padding: 60px 20px 20px; }
+.section-title h2 { font-size: 32px; margin-bottom: 10px; }
+.section-title p { color: #aaa; font-size: 15px; max-width: 500px; margin: 0 auto; }
+
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; padding: 20px 60px 80px; }
+.card { background: #1a1a1a; border-radius: 10px; overflow: hidden; border: 1px solid #262626; transition: transform 0.2s; }
+.card:hover { transform: translateY(-5px); }
+.card img { width: 100%; height: 180px; object-fit: cover; }
+.card-body { padding: 20px; }
+.card-body h3 { margin-bottom: 8px; }
+.card-body p { color: #aaa; font-size: 14px; line-height: 1.6; margin-bottom: 14px; }
+.card-price { color: #ff4c29; font-weight: 700; font-size: 14px; margin-bottom: 12px; }
+
+.price-card { background: #1a1a1a; border: 1px solid #262626; border-radius: 10px; padding: 40px 30px; text-align: center; }
+.price-card.featured { border: 2px solid #ff4c29; }
+.price-card h3 { font-size: 20px; margin-bottom: 10px; }
+.price-card .price { font-size: 40px; font-weight: 700; color: #ff4c29; margin-bottom: 20px; }
+.price-card .price span { font-size: 15px; color: #aaa; }
+.price-card ul { list-style: none; margin-bottom: 25px; text-align: left; }
+.price-card ul li { padding: 8px 0; color: #ccc; font-size: 14px; border-bottom: 1px solid #262626; }
+
+.auth-form { max-width: 400px; margin: 60px auto; background: #1a1a1a; padding: 35px; border-radius: 10px; border: 1px solid #262626; }
+.auth-form h2 { margin-bottom: 22px; text-align: center; }
+.auth-form input { width: 100%; padding: 11px; margin-bottom: 14px; border: 1px solid #333; border-radius: 6px; background: #0d0d0d; color: #fff; font-family: inherit; }
+.auth-form button { width: 100%; padding: 11px; background: #ff4c29; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 15px; }
+.auth-form p { text-align: center; margin-top: 14px; color: #aaa; font-size: 14px; }
+.auth-form a { color: #ff4c29; }
+.error-msg { color: #ff6b6b; margin-bottom: 10px; text-align: center; font-size: 14px; }
+.success-msg { color: #6bff8f; margin-bottom: 10px; text-align: center; font-size: 14px; }
+
+.empty-state { text-align: center; color: #888; padding: 30px 0; }
+
+footer { background: #0d0d0d; border-top: 1px solid #262626; text-align: center; padding: 25px; color: #777; font-size: 14px; }
+
+section[data-page] { display: none; }
+section[data-page].active { display: block; }
+
+@media (max-width: 768px) {
+  .menu-toggle { display: block; }
+  .nav-links {
+    position: absolute; top: 64px; left: 0; right: 0; background: #0d0d0d;
+    flex-direction: column; padding: 20px; display: none; align-items: flex-start;
+  }
+  .nav-links.open { display: flex; }
+  .hero h1 { font-size: 30px; }
+  .features, .card-grid { padding: 50px 20px; }
+}
+
+/* ===== Diet Plan + Join Process + Modal styles ===== */
+.diet-toggle { display: flex; justify-content: center; gap: 14px; margin: 0 20px 40px; flex-wrap: wrap; }
+.diet-toggle button {
+  background: transparent; border: 2px solid #ff4c29; color: #fff; padding: 10px 26px;
+  border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 14px;
+}
+.diet-toggle button.active { background: #ff4c29; }
+
+.diet-wrap { max-width: 900px; margin: 0 auto 80px; padding: 0 20px; }
+.diet-note { text-align: center; color: #aaa; font-size: 14px; margin-bottom: 26px; }
+.diet-table { width: 100%; border-collapse: collapse; background: #1a1a1a; border: 1px solid #262626; border-radius: 10px; overflow: hidden; }
+.diet-table th, .diet-table td { padding: 14px 18px; text-align: left; border-bottom: 1px solid #262626; font-size: 14px; }
+.diet-table th { background: #151515; color: #ff4c29; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
+.diet-table tr:last-child td { border-bottom: none; }
+.diet-table td:first-child { color: #fff; font-weight: 600; white-space: nowrap; width: 130px; }
+.diet-table td:last-child { color: #ccc; }
+
+.process-steps { max-width: 800px; margin: 0 auto 80px; padding: 0 20px; }
+.process-step { display: flex; gap: 20px; background: #1a1a1a; border: 1px solid #262626; border-radius: 10px; padding: 22px 26px; margin-bottom: 16px; align-items: flex-start; }
+.process-step .step-num { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; background: #ff4c29; color: #0d0d0d; font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+.process-step h3 { margin-bottom: 6px; font-size: 17px; }
+.process-step p { color: #aaa; font-size: 14px; line-height: 1.6; }
+
+.modal-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+  z-index: 999; align-items: center; justify-content: center; padding: 20px; overflow-y: auto;
+}
+.modal-overlay.open { display: flex; }
+.modal-box { background: #1a1a1a; border: 1px solid #262626; border-radius: 10px; padding: 34px 30px; max-width: 420px; width: 100%; text-align: center; }
+.modal-box h3 { font-size: 22px; margin-bottom: 10px; }
+.modal-box p { color: #aaa; font-size: 14px; margin-bottom: 22px; line-height: 1.6; }
+.modal-buttons { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 14px; }
+.modal-close { background: none; border: none; color: #777; font-size: 13px; cursor: pointer; text-decoration: underline; display: block; margin: 12px auto 0; }
+
+/* ===== Confirm modal ===== */
+.pay-box { max-width: 460px; text-align: left; }
+.pay-box h3 { text-align: center; }
+.pay-summary { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: #0d0d0d; border: 1px solid #262626; border-radius: 8px; padding: 14px 16px; margin: 16px 0 20px; font-size: 14px; }
+.pay-summary strong { color: #ff4c29; font-size: 18px; white-space: nowrap; }
+.pay-fields .hint { color: #aaa; font-size: 13px; line-height: 1.6; margin-bottom: 12px; }
+.pay-submit { width: 100%; }
+.receipt { background: #0d0d0d; border: 1px solid #262626; border-radius: 8px; padding: 6px 16px; margin: 16px 0 20px; }
+.receipt div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid #262626; font-size: 14px; color: #ccc; }
+.receipt div:last-child { border-bottom: none; }
+.receipt div span:last-child { color: #fff; text-align: right; }
+.tick { width: 54px; height: 54px; border-radius: 50%; background: #1f6f3f; color: #fff; font-size: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
+
+/* ===== Profile page ===== */
+.profile-wrap { max-width: 1050px; margin: 0 auto; padding: 40px 20px 80px; }
+.profile-head { display: flex; align-items: center; gap: 22px; background: #1a1a1a; border: 1px solid #262626; border-radius: 10px; padding: 26px; margin-bottom: 24px; flex-wrap: wrap; }
+.avatar { width: 76px; height: 76px; border-radius: 50%; background: #ff4c29; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; flex-shrink: 0; }
+.profile-head h2 { font-size: 26px; margin-bottom: 4px; }
+.profile-head p { color: #aaa; font-size: 14px; }
+.profile-head .head-actions { margin-left: auto; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.badge.good { background: rgba(107,255,143,0.15); color: #6bff8f; }
+.badge.warn { background: rgba(255,180,60,0.15); color: #ffb43c; }
+.badge.mute { background: #262626; color: #aaa; }
+.panel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 24px; margin-bottom: 24px; }
+.panel { background: #1a1a1a; border: 1px solid #262626; border-radius: 10px; padding: 24px; margin-bottom: 24px; }
+.panel-grid .panel { margin-bottom: 0; }
+.panel h3 { font-size: 18px; margin-bottom: 4px; }
+.panel .sub { color: #aaa; font-size: 13px; margin-bottom: 18px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-grid label { display: block; font-size: 12px; color: #aaa; margin-bottom: 5px; }
+.form-grid input, .form-grid select { width: 100%; padding: 10px; border: 1px solid #333; border-radius: 6px; background: #0d0d0d; color: #fff; font-family: inherit; font-size: 14px; }
+.form-grid .full { grid-column: 1 / -1; }
+.form-grid input[readonly] { color: #777; }
+.save-row { display: flex; align-items: center; gap: 14px; margin-top: 16px; }
+.save-msg { color: #6bff8f; font-size: 13px; }
+.info-list div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid #262626; font-size: 14px; color: #aaa; }
+.info-list div:last-child { border-bottom: none; }
+.info-list div span:last-child { color: #fff; text-align: right; }
+.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+.stat { background: #0d0d0d; border: 1px solid #262626; border-radius: 8px; padding: 12px; text-align: center; }
+.stat b { display: block; font-size: 22px; color: #ff4c29; }
+.stat span { font-size: 12px; color: #aaa; }
+.cal-title { font-size: 14px; color: #ccc; margin-bottom: 10px; font-weight: 600; }
+.calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 16px; }
+.cal-head { text-align: center; font-size: 11px; color: #777; padding-bottom: 2px; }
+.cal-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 6px; background: #0d0d0d; font-size: 12px; color: #888; }
+.cal-day.present { background: #ff4c29; color: #fff; font-weight: 700; }
+.cal-day.today { outline: 2px solid #fff; }
+.cal-day.future { opacity: 0.4; }
+.recent-att { font-size: 13px; color: #aaa; margin-top: 14px; }
+.recent-att div { padding: 6px 0; border-bottom: 1px solid #262626; display: flex; justify-content: space-between; }
+.booking-row { background: #0d0d0d; border: 1px solid #262626; border-radius: 8px; padding: 14px 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+.booking-row .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.booking-row .cancel-btn { background: transparent; border: 1px solid #ff6b6b; color: #ff6b6b; padding: 6px 14px; border-radius: 5px; cursor: pointer; font-size: 13px; }
+.table-scroll { overflow-x: auto; }
+.pay-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.pay-table th, .pay-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #262626; white-space: nowrap; }
+.pay-table th { color: #ff4c29; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+.pay-table td { color: #ccc; }
+.inq-row { background: #0d0d0d; border: 1px solid #262626; border-radius: 8px; padding: 14px 16px; margin-bottom: 10px; font-size: 14px; color: #ccc; }
+.inq-row .inq-top { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; font-size: 12px; color: #888; }
+@media (max-width: 480px) { .panel-grid { grid-template-columns: 1fr; } .form-grid { grid-template-columns: 1fr; } }
+
+/* ===== Customer inquiry chat ===== */
+.chat-fab {
+  position: fixed; right: 22px; bottom: 22px; width: 58px; height: 58px; border-radius: 50%;
+  background: #ff4c29; color: #fff; border: none; font-size: 26px; cursor: pointer; z-index: 900;
+  box-shadow: 0 6px 20px rgba(255,76,41,0.4);
+}
+.chat-panel {
+  position: fixed; right: 22px; bottom: 92px; width: 350px; height: 500px; max-height: calc(100vh - 120px);
+  background: #1a1a1a; border: 1px solid #262626; border-radius: 12px; z-index: 900;
+  display: none; flex-direction: column; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+}
+.chat-panel.open { display: flex; }
+.chat-head { background: #ff4c29; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; }
+.chat-head strong { display: block; font-size: 16px; }
+.chat-head span { font-size: 12px; color: #fff2ef; }
+.chat-head button { background: none; border: none; color: #fff; font-size: 18px; cursor: pointer; }
+.chat-messages { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.msg { max-width: 85%; padding: 10px 13px; border-radius: 12px; font-size: 14px; line-height: 1.5; word-wrap: break-word; }
+.msg.bot { background: #262626; color: #ddd; align-self: flex-start; border-bottom-left-radius: 3px; }
+.msg.user { background: #ff4c29; color: #fff; align-self: flex-end; border-bottom-right-radius: 3px; }
+.msg .chat-link { color: #ff4c29; font-weight: 600; text-decoration: underline; }
+.msg.typing { color: #888; font-style: italic; }
+.chat-chips { display: flex; gap: 6px; flex-wrap: wrap; padding: 8px 12px; border-top: 1px solid #262626; max-height: 92px; overflow-y: auto; }
+.chat-chips button { background: transparent; border: 1px solid #ff4c29; color: #fff; padding: 5px 10px; border-radius: 16px; font-size: 12px; cursor: pointer; }
+.chat-chips button:hover { background: rgba(255,76,41,0.2); }
+.chat-input { display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid #262626; }
+.chat-input input { flex: 1; padding: 10px; border: 1px solid #333; border-radius: 6px; background: #0d0d0d; color: #fff; font-family: inherit; font-size: 14px; }
+.chat-input button { background: #ff4c29; color: #fff; border: none; padding: 0 16px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+@media (max-width: 480px) {
+  .chat-panel { right: 10px; left: 10px; width: auto; bottom: 86px; height: 70vh; }
+  .chat-fab { right: 14px; bottom: 14px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a onclick="navigate('home')" class="logo">POWER<span>FIT</span></a>
+  <button class="menu-toggle" id="menuToggle">&#9776;</button>
+  <div class="nav-links" id="navLinks">
+    <a onclick="navigate('home')">Home</a>
+    <a onclick="navigate('classes')">Classes</a>
+    <a onclick="navigate('trainers')">Trainers</a>
+    <a onclick="navigate('pricing')">Pricing</a>
+    <a onclick="navigate('diet')">Diet Plans</a>
+    <a onclick="navigate('join-process')">How to Join</a>
+    <span id="authLinks"></span>
+  </div>
+</nav>
+
+<section data-page="home">
+  <div class="hero">
+    <h1>Transform your body, <span>transform your life</span></h1>
+    <p>Join PowerFit and get access to world-class trainers, equipment, and a community that pushes you to be your best.</p>
+    <div class="hero-buttons">
+      <a onclick="navigate('register')" class="btn-primary">Join Now</a>
+      <a onclick="navigate('classes')" class="btn-outline">View Classes</a>
+    </div>
+  </div>
+  <div class="section-title"><h2>Why choose PowerFit</h2><p>Everything you need under one roof to reach your fitness goals</p></div>
+  <div class="features">
+    <div class="feature-card"><div class="icon">🏋️</div><h3>Modern Equipment</h3><p>Top of the line machines and free weights for every kind of workout.</p></div>
+    <div class="feature-card"><div class="icon">👨‍🏫</div><h3>Expert Trainers</h3><p>Certified trainers who design personalized plans for your goals.</p></div>
+    <div class="feature-card"><div class="icon">📅</div><h3>Flexible Classes</h3><p>Book HIIT, Yoga, Zumba and Strength classes anytime that suits you.</p></div>
+    <div class="feature-card"><div class="icon">💪</div><h3>Proven Results</h3><p>Thousands of members have transformed their bodies with our programs.</p></div>
+  </div>
+  <div class="cta">
+    <h2>Ready to start your journey?</h2>
+    <p>Get your first week free when you join today.</p>
+    <a onclick="navigate('register')" class="btn-primary">Get Started</a>
+  </div>
+</section>
+
+<section data-page="classes">
+  <div class="section-title"><h2>Our Classes</h2><p>Pick a class that fits your goals and schedule</p></div>
+  <div class="card-grid" id="classesGrid"></div>
+</section>
+
+<section data-page="trainers">
+  <div class="section-title"><h2>Meet Our Trainers</h2><p>Certified professionals dedicated to your progress</p></div>
+  <div class="card-grid" id="trainersGrid"></div>
+</section>
+
+<section data-page="pricing">
+  <div class="section-title"><h2>Membership Plans</h2><p>Choose the plan that works best for you</p></div>
+  <div class="card-grid">
+    <div class="price-card"><h3>Basic</h3><p class="price">Rs 3000<span>/mo</span></p><ul><li>Gym access</li><li>Locker room</li><li>2 classes/month</li></ul><button class="btn-outline" onclick="choosePlan('Basic')">Choose Plan</button></div>
+    <div class="price-card featured"><h3>Pro</h3><p class="price">Rs 5000<span>/mo</span></p><ul><li>Unlimited gym access</li><li>All classes included</li><li>1 trainer session/week</li></ul><button class="btn-primary" onclick="choosePlan('Pro')">Choose Plan</button></div>
+    <div class="price-card"><h3>Elite</h3><p class="price">Rs 8000<span>/mo</span></p><ul><li>Unlimited everything</li><li>Personal trainer</li><li>Diet plan included</li></ul><button class="btn-outline" onclick="choosePlan('Elite')">Choose Plan</button></div>
+  </div>
+</section>
+
+<section data-page="login">
+  <div class="auth-form">
+    <h2>Login</h2>
+    <div id="loginMsg"></div>
+    <input id="loginEmail" type="email" placeholder="Email" />
+    <input id="loginPassword" type="password" placeholder="Password" />
+    <button onclick="loginUser()">Login</button>
+    <p>Don't have an account? <a onclick="navigate('register')">Register</a></p>
+  </div>
+</section>
+
+<section data-page="register">
+  <div class="auth-form">
+    <h2>Join PowerFit</h2>
+    <div id="registerMsg"></div>
+    <input id="registerName" placeholder="Full Name" />
+    <input id="registerEmail" type="email" placeholder="Email" />
+    <input id="registerPhone" type="tel" placeholder="Phone number" />
+    <input id="registerPassword" type="password" placeholder="Password" />
+    <button onclick="registerUser()">Create Account</button>
+    <p>Already a member? <a onclick="navigate('login')">Login</a></p>
+  </div>
+</section>
+
+<!-- Profile page (details, membership, attendance, bookings, history, inquiries) -->
+<section data-page="profile">
+  <div class="profile-wrap" id="profileRoot"></div>
+</section>
+
+<section data-page="diet">
+  <div class="section-title"><h2>Diet Plans</h2><p>Sample nutrition plans to match your fitness goal. Pair these with your trainer's advice.</p></div>
+  <div class="diet-toggle">
+    <button id="dietBtnLoss" onclick="renderDiet('loss')">Weight Loss</button>
+    <button id="dietBtnGain" onclick="renderDiet('gain')">Weight Gain</button>
+  </div>
+  <div class="diet-wrap">
+    <p class="diet-note" id="dietNote"></p>
+    <table class="diet-table">
+      <thead><tr><th>Meal</th><th>What to eat</th></tr></thead>
+      <tbody id="dietTableBody"></tbody>
+    </table>
+  </div>
+</section>
+
+<section data-page="join-process">
+  <div class="section-title"><h2>How to Join PowerFit</h2><p>From sign up to your first class, here's exactly what happens</p></div>
+  <div class="process-steps">
+    <div class="process-step">
+      <div class="step-num">1</div>
+      <div><h3>Create your account</h3><p>Register with your name, email, phone and a password. This takes less than a minute and gives you a member profile.</p></div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">2</div>
+      <div><h3>Choose your membership plan</h3><p>Pick Basic, Pro or Elite based on your budget and how much access and trainer support you want. Your plan shows up on your profile.</p></div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">3</div>
+      <div><h3>Pick your diet plan</h3><p>Choose a Weight Loss or Weight Gain nutrition plan so your eating matches your training goal.</p></div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">4</div>
+      <div><h3>Book your first class</h3><p>Browse HIIT, Yoga, Strength or Zumba and reserve a slot. You'll see it under "My bookings" on your profile.</p></div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">5</div>
+      <div><h3>Show up and mark attendance</h3><p>Train, then mark your attendance from your profile. Your monthly attendance calendar tracks every visit.</p></div>
+    </div>
+  </div>
+  <div style="text-align:center; margin-bottom:80px;">
+    <a onclick="navigate('register')" class="btn-primary">Start Now</a>
+  </div>
+</section>
+
+<footer>&copy; 2026 PowerFit Gym. All rights reserved.</footer>
+
+<!-- Customer inquiry chat box -->
+<button class="chat-fab" id="chatFab" onclick="toggleChat()" aria-label="Open chat">💬</button>
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-head">
+    <div><strong>PowerFit Support</strong><span>Ask us anything</span></div>
+    <button onclick="toggleChat()" aria-label="Close chat">✕</button>
+  </div>
+  <div class="chat-messages" id="chatMessages"></div>
+  <div class="chat-chips" id="chatChips"></div>
+  <div class="chat-input">
+    <input id="chatInput" placeholder="Type your question..." autocomplete="off" onkeydown="if(event.key==='Enter')sendChat()" />
+    <button onclick="sendChat()">Send</button>
+  </div>
+</div>
+
+<!-- Diet suggestion modal (shown after joining) -->
+<div class="modal-overlay" id="dietModalOverlay">
+  <div class="modal-box">
+    <h3 id="dietModalTitle">Welcome to PowerFit!</h3>
+    <p id="dietModalText">Your account is ready. Pick a diet plan that matches your goal to get the most out of your training.</p>
+    <div class="modal-buttons">
+      <button class="btn-primary btn-small" onclick="goToDietFromModal('loss')">Weight Loss Plan</button>
+      <button class="btn-outline btn-small" onclick="goToDietFromModal('gain')">Weight Gain Plan</button>
+    </div>
+    <button class="modal-close" onclick="closeDietModal()">Maybe later</button>
+  </div>
+</div>
+
+<!-- Confirm modal (no payment methods) -->
+<div class="modal-overlay" id="payOverlay">
+  <div class="modal-box pay-box">
+    <div id="payStepForm">
+      <h3 id="confirmHeading">Confirm booking</h3>
+      <div class="pay-summary"><span id="paySumTitle"></span><strong id="paySumAmount"></strong></div>
+      <div class="pay-fields"><p class="hint" id="payNote"></p></div>
+      <button class="btn-primary pay-submit" id="payBtn" onclick="submitPayment()">Confirm</button>
+      <button class="modal-close" onclick="closePayment()">Cancel</button>
+    </div>
+    <div id="payStepDone" style="display:none; text-align:center;">
+      <div class="tick">✓</div>
+      <h3 id="doneTitle">Booking confirmed</h3>
+      <div class="receipt" id="doneReceipt"></div>
+      <div class="modal-buttons">
+        <button class="btn-primary btn-small" onclick="goToProfileFromPayment()">View my profile</button>
+        <button class="btn-outline btn-small" onclick="goToDietFromPayment()">Choose diet plan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const classesData = [
+  { id: 1, title: "HIIT Training", time: "Mon, Wed, Fri - 7:00 AM", price: 300, desc: "High intensity interval training to burn fat fast.", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500" },
+  { id: 2, title: "Yoga Flow", time: "Tue, Thu - 6:00 PM", price: 250, desc: "Improve flexibility and reduce stress with guided yoga.", img: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500" },
+  { id: 3, title: "Strength Training", time: "Mon to Sat - 8:00 AM", price: 350, desc: "Build muscle with free weights and resistance machines.", img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500" },
+  { id: 4, title: "Zumba Dance", time: "Wed, Sat - 5:00 PM", price: 250, desc: "Fun cardio dance workout to upbeat music.", img: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=500" },
+];
+
+const trainersData = [
+  { name: "Ali Raza", role: "Strength Coach", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500" },
+  { name: "Sara Ahmed", role: "Yoga Instructor", img: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500" },
+  { name: "Bilal Khan", role: "HIIT Specialist", img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500" },
+];
+
+const planPrices = { Basic: 3000, Pro: 5000, Elite: 8000 };
+
+/* Change these to your real gym hours */
+const GYM_HOURS = "Mon to Sat: 5:00 AM - 10:00 PM<br>Sunday: 7:00 AM - 12:00 PM";
+
+/* ---------- storage helpers ---------- */
+function getUsers() { return JSON.parse(localStorage.getItem("gym_users") || "[]"); }
+function saveUsers(users) { localStorage.setItem("gym_users", JSON.stringify(users)); }
+function getCurrentUser() { return JSON.parse(localStorage.getItem("gym_current_user") || "null"); }
+function setCurrentUser(user) { localStorage.setItem("gym_current_user", JSON.stringify(user)); }
+function getBookings() { return JSON.parse(localStorage.getItem("gym_bookings") || "[]"); }
+function saveBookings(b) { localStorage.setItem("gym_bookings", JSON.stringify(b)); }
+function getPayments() { return JSON.parse(localStorage.getItem("gym_payments") || "[]"); }
+function savePayments(p) { localStorage.setItem("gym_payments", JSON.stringify(p)); }
+function getAttendance() { return JSON.parse(localStorage.getItem("gym_attendance") || "[]"); }
+function saveAttendance(a) { localStorage.setItem("gym_attendance", JSON.stringify(a)); }
+function getInquiries() { return JSON.parse(localStorage.getItem("gym_inquiries") || "[]"); }
+function saveInquiries(i) { localStorage.setItem("gym_inquiries", JSON.stringify(i)); }
+
+function getFullUser() {
+  const cu = getCurrentUser();
+  return cu ? getUsers().find(u => u.email === cu.email) : null;
+}
+function updateUser(email, patch) {
+  const users = getUsers().map(u => u.email === email ? Object.assign({}, u, patch) : u);
+  saveUsers(users);
+}
+
+/* ---------- small utils ---------- */
+const pad = n => String(n).padStart(2, "0");
+function ymd(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+function todayStr() { return ymd(new Date()); }
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+function fmtDate(s) {
+  if (!s) return "-";
+  const d = new Date(s + "T00:00:00");
+  return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+}
+function hasActiveMembership() {
+  const u = getFullUser();
+  return !!(u && u.membership && u.membership.end >= todayStr());
+}
+function classIsFree() {
+  const u = getFullUser();
+  return hasActiveMembership() && ["Pro", "Elite"].includes(u.membership.plan);
+}
+
+/* ---------- navigation ---------- */
+function navigate(page) {
+  const user = getCurrentUser();
+  if (page === "dashboard") page = "profile";
+  if (page === "profile" && !user) { page = "login"; }
+  document.querySelectorAll("section[data-page]").forEach(s => s.classList.remove("active"));
+  document.querySelector(`section[data-page="${page}"]`).classList.add("active");
+  document.querySelectorAll(".nav-links a").forEach(a => a.classList.remove("active"));
+  window.scrollTo(0, 0);
+  document.getElementById("navLinks").classList.remove("open");
+  if (page === "classes") renderClasses();
+  if (page === "trainers") renderTrainers();
+  if (page === "profile") renderProfile();
+  if (page === "diet") renderDiet();
+}
+
+function updateNavbar() {
+  const user = getCurrentUser();
+  const authLinks = document.getElementById("authLinks");
+  if (user) {
+    authLinks.innerHTML = `<a onclick="navigate('profile')">My Profile</a> <a onclick="logoutUser()" style="background:#ff4c29;color:white;padding:9px 20px;border-radius:5px;">Logout</a>`;
+  } else {
+    authLinks.innerHTML = `<a onclick="navigate('login')">Login</a> <a onclick="navigate('register')" style="background:#ff4c29;color:white;padding:9px 20px;border-radius:5px;">Join Now</a>`;
+  }
+}
+
+/* ---------- auth ---------- */
+function registerUser() {
+  const name = document.getElementById("registerName").value.trim();
+  const email = document.getElementById("registerEmail").value.trim();
+  const phone = document.getElementById("registerPhone").value.trim();
+  const password = document.getElementById("registerPassword").value;
+  const msg = document.getElementById("registerMsg");
+  if (!name || !email || !phone || !password) { msg.innerHTML = `<p class="error-msg">Please fill all fields</p>`; return; }
+  const users = getUsers();
+  if (users.find(u => u.email === email)) { msg.innerHTML = `<p class="error-msg">Email already registered</p>`; return; }
+  users.push({ name, email, phone, password, joined: todayStr(), age: "", weight: "", height: "", goal: "" });
+  saveUsers(users);
+  setCurrentUser({ name, email });
+  updateNavbar();
+  navigate("home");
+  openDietModal("Welcome to PowerFit!", "Your account is ready. Choose a diet plan that matches your goal, then complete your details on your profile.");
+}
+
+function loginUser() {
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+  const msg = document.getElementById("loginMsg");
+  const users = getUsers();
+  const found = users.find(u => u.email === email && u.password === password);
+  if (!found) { msg.innerHTML = `<p class="error-msg">Invalid email or password</p>`; return; }
+  setCurrentUser({ name: found.name, email: found.email });
+  updateNavbar();
+  navigate("home");
+}
+
+function logoutUser() {
+  localStorage.removeItem("gym_current_user");
+  updateNavbar();
+  navigate("home");
+}
+
+/* ---------- classes / trainers ---------- */
+function renderClasses() {
+  const grid = document.getElementById("classesGrid");
+  const user = getCurrentUser();
+  const bookings = getBookings();
+  const free = user && classIsFree();
+  grid.innerHTML = classesData.map(c => {
+    const alreadyBooked = user && bookings.find(b => b.classId === c.id && b.email === user.email);
+    return `
+    <div class="card">
+      <img src="${c.img}" alt="${c.title}" />
+      <div class="card-body">
+        <h3>${c.title}</h3>
+        <p>${c.desc}<br><strong>${c.time}</strong></p>
+        <div class="card-price">${free ? "Included in your plan" : "Rs " + c.price + " / month"}</div>
+        <button class="btn-primary btn-small" onclick="bookClass(${c.id})" ${alreadyBooked ? "disabled" : ""}>
+          ${alreadyBooked ? "Booked" : "Book Class"}
+        </button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function renderTrainers() {
+  const grid = document.getElementById("trainersGrid");
+  grid.innerHTML = trainersData.map(t => `
+    <div class="card">
+      <img src="${t.img}" alt="${t.name}" />
+      <div class="card-body"><h3>${t.name}</h3><p>${t.role}</p></div>
+    </div>`).join("");
+}
+
+/* ---------- booking -> confirm flow (no payment methods) ---------- */
+let pending = null;      // what the customer is confirming
+
+function bookClass(classId) {
+  const user = getCurrentUser();
+  if (!user) { navigate("login"); return; }
+  if (getBookings().find(b => b.classId === classId && b.email === user.email)) return;
+  const cls = classesData.find(c => c.id === classId);
+  openPayment({ kind: "class", refId: classId, title: cls.title + " (class booking)", amount: classIsFree() ? 0 : cls.price });
+}
+
+function choosePlan(planName) {
+  const user = getCurrentUser();
+  if (!user) { navigate("register"); return; }
+  openPayment({ kind: "plan", refId: planName, title: planName + " membership (30 days)", amount: planPrices[planName] });
+}
+
+function openPayment(item) {
+  pending = item;
+  document.getElementById("payStepForm").style.display = "block";
+  document.getElementById("payStepDone").style.display = "none";
+  document.getElementById("confirmHeading").textContent = item.kind === "class" ? "Confirm booking" : "Confirm membership";
+  document.getElementById("paySumTitle").textContent = item.title;
+  document.getElementById("paySumAmount").textContent = item.amount > 0 ? "Rs " + item.amount : "Free";
+  document.getElementById("payNote").textContent = item.amount === 0
+    ? "This class is included in your membership plan."
+    : "Fees are collected at the gym reception.";
+  document.getElementById("payBtn").textContent = item.kind === "class" ? "Confirm booking" : "Confirm membership";
+  document.getElementById("payOverlay").classList.add("open");
+}
+
+function closePayment() {
+  document.getElementById("payOverlay").classList.remove("open");
+  pending = null;
+}
+
+function submitPayment() {
+  completePayment();
+}
+
+function completePayment() {
+  const user = getCurrentUser();
+  const today = todayStr();
+  const status = pending.amount === 0 ? "Included in plan" : "Confirmed";
+  const payment = {
+    id: "PF" + Date.now().toString().slice(-8),
+    email: user.email, title: pending.title, amount: pending.amount,
+    status: status, date: today
+  };
+  const pays = getPayments(); pays.push(payment); savePayments(pays);
+
+  if (pending.kind === "class") {
+    const cls = classesData.find(c => c.id === pending.refId);
+    const bookings = getBookings();
+    bookings.push({ classId: cls.id, email: user.email, title: cls.title, time: cls.time, paymentId: payment.id, bookedOn: today });
+    saveBookings(bookings);
+  } else {
+    const end = new Date(); end.setDate(end.getDate() + 30);
+    updateUser(user.email, { membership: { plan: pending.refId, start: today, end: ymd(end) } });
+  }
+
+  document.getElementById("doneTitle").textContent = pending.kind === "class" ? "Booking confirmed" : "Membership activated";
+  document.getElementById("doneReceipt").innerHTML = `
+    <div><span>Reference no.</span><span>${payment.id}</span></div>
+    <div><span>Item</span><span>${esc(payment.title)}</span></div>
+    <div><span>Fee</span><span>${payment.amount > 0 ? "Rs " + payment.amount : "Free"}</span></div>
+    <div><span>Status</span><span>${esc(status)}</span></div>
+    <div><span>Date</span><span>${fmtDate(today)}</span></div>`;
+  document.getElementById("payStepForm").style.display = "none";
+  document.getElementById("payStepDone").style.display = "block";
+  renderClasses();
+}
+
+function goToProfileFromPayment() { closePayment(); navigate("profile"); }
+function goToDietFromPayment() { closePayment(); navigate("diet"); }
+
+/* ---------- attendance ---------- */
+function markAttendance(type, ref, label) {
+  const u = getCurrentUser();
+  if (!u) return;
+  const d = todayStr();
+  const list = getAttendance();
+  if (list.find(a => a.email === u.email && a.date === d && a.ref === ref)) return;
+  list.push({ email: u.email, date: d, type: type, ref: ref, label: label });
+  saveAttendance(list);
+  renderProfile();
+}
+function gymCheckIn() { markAttendance("Gym", "gym", "Gym visit"); }
+function markClassAttendance(classId) {
+  const cls = classesData.find(c => c.id === classId);
+  markAttendance("Class", "class-" + classId, cls.title);
+}
+
+function renderCalendar(attList) {
+  const now = new Date();
+  const y = now.getFullYear(), m = now.getMonth();
+  const firstDow = new Date(y, m, 1).getDay();
+  const days = new Date(y, m + 1, 0).getDate();
+  const prefix = y + "-" + pad(m + 1);
+  const present = new Set(attList.filter(a => a.date.startsWith(prefix)).map(a => Number(a.date.slice(8))));
+  let h = ["S", "M", "T", "W", "T", "F", "S"].map(d => `<div class="cal-head">${d}</div>`).join("");
+  for (let i = 0; i < firstDow; i++) h += "<div></div>";
+  for (let d = 1; d <= days; d++) {
+    let cls = "cal-day";
+    if (present.has(d)) cls += " present";
+    if (d === now.getDate()) cls += " today";
+    if (d > now.getDate()) cls += " future";
+    h += `<div class="${cls}">${d}</div>`;
+  }
+  return `<div class="cal-title">${now.toLocaleString("en-IN", { month: "long", year: "numeric" })}</div><div class="calendar">${h}</div>`;
+}
+
+/* ---------- profile ---------- */
+function renderProfile() {
+  const cu = getCurrentUser();
+  const root = document.getElementById("profileRoot");
+  if (!cu) return;
+  const u = getFullUser() || cu;
+  const today = todayStr();
+  const mem = u.membership;
+  const memActive = mem && mem.end >= today;
+  const allPays = getPayments();
+  const bookings = getBookings().filter(b => b.email === cu.email);
+  const pays = allPays.filter(p => p.email === cu.email).slice().reverse();
+  const att = getAttendance().filter(a => a.email === cu.email);
+  const inqs = getInquiries().filter(i => i.email === cu.email).slice().reverse();
+  const now = new Date();
+  const monthPrefix = today.slice(0, 7);
+  const monthDays = new Set(att.filter(a => a.date.startsWith(monthPrefix)).map(a => a.date));
+  const pct = Math.round(monthDays.size / now.getDate() * 100);
+  const classCount = att.filter(a => a.type === "Class").length;
+  const gymDoneToday = att.some(a => a.date === today && a.ref === "gym");
+  const initials = (u.name || "?").split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase();
+
+  let bmi = "-";
+  if (Number(u.weight) > 0 && Number(u.height) > 0) {
+    bmi = (Number(u.weight) / Math.pow(Number(u.height) / 100, 2)).toFixed(1);
+  }
+
+  const bookingsHtml = bookings.length === 0
+    ? `<div class="empty-state">No classes booked yet. <a onclick="navigate('classes')" style="color:#ff4c29;">Browse classes</a></div>`
+    : bookings.map(b => {
+        const p = allPays.find(x => x.id === b.paymentId);
+        const badge = p ? `<span class="badge ${p.status === "Confirmed" || p.status === "Included in plan" ? "good" : "warn"}">${esc(p.status)}</span>` : "";
+        const doneToday = att.some(a => a.date === today && a.ref === "class-" + b.classId);
+        return `
+        <div class="booking-row">
+          <div><strong>${esc(b.title)}</strong> ${badge}<br><span style="color:#aaa;font-size:13px;">${esc(b.time)}</span></div>
+          <div class="actions">
+            <button class="btn-primary btn-small" onclick="markClassAttendance(${b.classId})" ${doneToday ? "disabled" : ""}>${doneToday ? "Attended today" : "Mark attendance"}</button>
+            <button class="cancel-btn" onclick="cancelBooking('${b.classId}')">Cancel</button>
+          </div>
+        </div>`;
+      }).join("");
+
+  const payHtml = pays.length === 0
+    ? `<div class="empty-state">Nothing here yet.</div>`
+    : `<div class="table-scroll"><table class="pay-table"><thead><tr><th>Date</th><th>Item</th><th>Fee</th><th>Status</th></tr></thead><tbody>` +
+      pays.map(p => `<tr><td>${fmtDate(p.date)}</td><td>${esc(p.title)}</td><td>${p.amount > 0 ? "Rs " + p.amount : "Free"}</td><td>${esc(p.status)}</td></tr>`).join("") +
+      `</tbody></table></div>`;
+
+  const inqHtml = inqs.length === 0
+    ? `<div class="empty-state">No inquiries yet. Use the chat button at the bottom right to ask us anything.</div>`
+    : inqs.map(i => `
+        <div class="inq-row">
+          <div class="inq-top"><span>${esc(i.id)} &middot; ${fmtDate(i.date)}</span><span class="badge warn">${esc(i.status)}</span></div>
+          ${esc(i.message)}
+        </div>`).join("");
+
+  const recentHtml = att.length === 0
+    ? `<div class="recent-att"><div>No attendance marked yet.</div></div>`
+    : `<div class="recent-att">` + att.slice().reverse().slice(0, 5).map(a => `<div><span>${esc(a.label)}</span><span>${fmtDate(a.date)}</span></div>`).join("") + `</div>`;
+
+  const goalOpt = g => `<option value="${g}" ${u.goal === g ? "selected" : ""}>${g || "Select goal"}</option>`;
+
+  root.innerHTML = `
+    <div class="profile-head">
+      <div class="avatar">${esc(initials)}</div>
+      <div>
+        <h2>${esc(u.name)}</h2>
+        <p>${esc(u.email)}${u.phone ? " &middot; " + esc(u.phone) : ""}</p>
+        <p style="margin-top:6px;">${memActive
+          ? `<span class="badge good">${esc(mem.plan)} member</span> valid till ${fmtDate(mem.end)}`
+          : `<span class="badge mute">No active plan</span>`}</p>
+      </div>
+      <div class="head-actions">
+        <button class="btn-primary" onclick="gymCheckIn()" ${gymDoneToday ? "disabled" : ""}>${gymDoneToday ? "Checked in today" : "Gym check-in"}</button>
+      </div>
+    </div>
+
+    <div class="panel-grid">
+      <div class="panel">
+        <h3>My details</h3>
+        <p class="sub">Keep these updated so your trainer can plan your program.</p>
+        <div class="form-grid">
+          <div class="full"><label>Full name</label><input id="pfName" value="${esc(u.name)}" /></div>
+          <div class="full"><label>Email (cannot be changed)</label><input value="${esc(u.email)}" readonly /></div>
+          <div><label>Phone</label><input id="pfPhone" type="tel" value="${esc(u.phone)}" /></div>
+          <div><label>Age</label><input id="pfAge" type="number" min="10" max="99" value="${esc(u.age)}" /></div>
+          <div><label>Weight (kg)</label><input id="pfWeight" type="number" min="20" max="300" value="${esc(u.weight)}" /></div>
+          <div><label>Height (cm)</label><input id="pfHeight" type="number" min="100" max="250" value="${esc(u.height)}" /></div>
+          <div class="full"><label>Fitness goal</label>
+            <select id="pfGoal">${goalOpt("")}${goalOpt("Weight Loss")}${goalOpt("Weight Gain")}${goalOpt("Stay Fit")}</select>
+          </div>
+        </div>
+        <div class="save-row"><button class="btn-primary btn-small" onclick="saveProfile()">Save details</button><span class="save-msg" id="pfSaveMsg"></span></div>
+      </div>
+
+      <div class="panel">
+        <h3>Membership</h3>
+        <p class="sub">Your current plan and account info.</p>
+        <div class="info-list">
+          <div><span>Plan</span><span>${memActive ? esc(mem.plan) : "None"}</span></div>
+          <div><span>Started</span><span>${memActive ? fmtDate(mem.start) : "-"}</span></div>
+          <div><span>Valid till</span><span>${memActive ? fmtDate(mem.end) : "-"}</span></div>
+          <div><span>Member since</span><span>${fmtDate(u.joined)}</span></div>
+          <div><span>Goal</span><span>${esc(u.goal) || "-"}</span></div>
+          <div><span>BMI</span><span>${bmi}</span></div>
+        </div>
+        <div style="margin-top:18px;"><button class="btn-outline btn-small" onclick="navigate('pricing')">${memActive ? "Change plan" : "Choose a plan"}</button></div>
+      </div>
+    </div>
+
+    <div class="panel-grid">
+      <div class="panel">
+        <h3>Attendance</h3>
+        <p class="sub">Orange days are days you trained this month.</p>
+        <div class="stat-grid">
+          <div class="stat"><b>${monthDays.size}</b><span>Days this month</span></div>
+          <div class="stat"><b>${pct}%</b><span>Month attendance</span></div>
+          <div class="stat"><b>${classCount}</b><span>Classes attended</span></div>
+        </div>
+        ${renderCalendar(att)}
+        ${recentHtml}
+      </div>
+
+      <div class="panel">
+        <h3>My bookings</h3>
+        <p class="sub">Mark attendance after each class, or cancel a booking.</p>
+        ${bookingsHtml}
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Booking history</h3>
+      <p class="sub">All your membership and class bookings.</p>
+      ${payHtml}
+    </div>
+
+    <div class="panel">
+      <h3>My inquiries</h3>
+      <p class="sub">Messages you sent to our team from the chat box.</p>
+      ${inqHtml}
+    </div>`;
+}
+
+function saveProfile() {
+  const cu = getCurrentUser();
+  if (!cu) return;
+  const name = document.getElementById("pfName").value.trim();
+  if (!name) { alert("Name cannot be empty"); return; }
+  updateUser(cu.email, {
+    name: name,
+    phone: document.getElementById("pfPhone").value.trim(),
+    age: document.getElementById("pfAge").value,
+    weight: document.getElementById("pfWeight").value,
+    height: document.getElementById("pfHeight").value,
+    goal: document.getElementById("pfGoal").value
+  });
+  setCurrentUser({ name: name, email: cu.email });
+  updateNavbar();
+  renderProfile();
+  const msg = document.getElementById("pfSaveMsg");
+  msg.textContent = "Details saved";
+  setTimeout(() => { if (msg) msg.textContent = ""; }, 2500);
+}
+
+function cancelBooking(classId) {
+  const user = getCurrentUser();
+  const all = getBookings();
+  const target = all.find(b => b.classId == classId && b.email === user.email);
+  if (target) {
+    const pays = getPayments().map(p => {
+      if (p.id === target.paymentId) p.status = "Cancelled";
+      return p;
+    });
+    savePayments(pays);
+  }
+  saveBookings(all.filter(b => !(b.classId == classId && b.email === user.email)));
+  renderProfile();
+}
+
+/* ---------- diet ---------- */
+const dietPlans = {
+  loss: {
+    note: "A calorie-controlled, high-protein plan to support fat loss while preserving muscle. Adjust portions to your body weight and activity level.",
+    meals: [
+      { meal: "Breakfast", food: "2 boiled eggs (or a bowl of poha), 1 cup green tea/black coffee, a handful of nuts" },
+      { meal: "Mid-morning", food: "1 apple or a bowl of papaya" },
+      { meal: "Lunch", food: "1-2 rotis, grilled chicken/paneer/dal, a large bowl of salad, sautéed vegetables" },
+      { meal: "Evening Snack", food: "Roasted chana or sprouts salad, green tea" },
+      { meal: "Dinner", food: "Grilled fish/chicken/tofu, steamed vegetables, small bowl of soup" },
+      { meal: "Before Bed", food: "Warm water or herbal tea (avoid heavy carbs late at night)" },
+    ]
+  },
+  gain: {
+    note: "A calorie-surplus, protein-rich plan to support healthy muscle gain alongside strength training. Increase portions gradually and stay consistent.",
+    meals: [
+      { meal: "Breakfast", food: "4 eggs or paneer bhurji, 2-3 parathas/oats with milk, a banana" },
+      { meal: "Mid-morning", food: "Peanut butter sandwich or a protein shake with milk" },
+      { meal: "Lunch", food: "2-3 rotis or rice, chicken/paneer/rajma curry, a bowl of curd, mixed vegetables" },
+      { meal: "Evening Snack", food: "Dry fruits, banana shake or a cheese sandwich" },
+      { meal: "Dinner", food: "Rice/roti, dal or meat curry, vegetables, a glass of milk" },
+      { meal: "Before Bed", food: "A glass of warm milk with nuts" },
+    ]
+  }
+};
+
+let currentDietType = "loss";
+
+function renderDiet(type) {
+  if (type) currentDietType = type;
+  const plan = dietPlans[currentDietType];
+  document.getElementById("dietBtnLoss").classList.toggle("active", currentDietType === "loss");
+  document.getElementById("dietBtnGain").classList.toggle("active", currentDietType === "gain");
+  document.getElementById("dietNote").textContent = plan.note;
+  document.getElementById("dietTableBody").innerHTML = plan.meals.map(m => `
+    <tr><td>${m.meal}</td><td>${m.food}</td></tr>
+  `).join("");
+}
+
+function openDietModal(title, text) {
+  document.getElementById("dietModalTitle").textContent = title;
+  document.getElementById("dietModalText").textContent = text;
+  document.getElementById("dietModalOverlay").classList.add("open");
+}
+function closeDietModal() { document.getElementById("dietModalOverlay").classList.remove("open"); }
+function goToDietFromModal(type) { closeDietModal(); navigate("diet"); renderDiet(type); }
+
+/* =====================================================================
+   CUSTOMER INQUIRY CHAT
+   - Quick-reply buttons + typed questions get automatic answers
+   - "Talk to team" saves a message as an inquiry (shows in My Profile)
+   ===================================================================== */
+const chatChips = [
+  ["Timings", "timings"], ["Membership fees", "membership fees"], ["Classes", "classes"],
+  ["Trainers", "trainers"], ["Diet plans", "diet plans"], ["Fee payment", "payment help"],
+  ["Talk to team", "talk to team"]
+];
+let chatState = { step: null, draft: {} };
+
+function getChat() { return JSON.parse(localStorage.getItem("gym_chat") || "[]"); }
+function saveChat(c) { localStorage.setItem("gym_chat", JSON.stringify(c.slice(-60))); }
+
+function addChat(from, text) {
+  const c = getChat();
+  c.push({ from: from, text: text });
+  saveChat(c);
+  renderChat();
+}
+
+function renderChat() {
+  const box = document.getElementById("chatMessages");
+  box.innerHTML = getChat().map(m =>
+    m.from === "user" ? `<div class="msg user">${esc(m.text)}</div>` : `<div class="msg bot">${m.text}</div>`
+  ).join("");
+  box.scrollTop = box.scrollHeight;
+}
+
+function botSay(html, delay) {
+  const box = document.getElementById("chatMessages");
+  const t = document.createElement("div");
+  t.className = "msg bot typing"; t.textContent = "typing...";
+  box.appendChild(t); box.scrollTop = box.scrollHeight;
+  setTimeout(() => addChat("bot", html), delay == null ? 450 : delay);
+}
+
+function toggleChat() {
+  const panel = document.getElementById("chatPanel");
+  const opening = !panel.classList.contains("open");
+  panel.classList.toggle("open");
+  if (opening) {
+    if (getChat().length === 0) {
+      addChat("bot", "Hi! 👋 I'm the PowerFit assistant. Ask about timings, fees, classes, diet plans or payments, or tap an option below.");
+    } else {
+      renderChat();
+    }
+    document.getElementById("chatInput").focus();
+  }
+}
+
+function chatGo(page) {
+  document.getElementById("chatPanel").classList.remove("open");
+  navigate(page);
+}
+function chatLink(page, label) {
+  return `<a class="chat-link" onclick="chatGo('${page}')">${label}</a>`;
+}
+
+function chatQuick(text) {
+  document.getElementById("chatInput").value = text;
+  sendChat();
+}
+
+function startInquiry() {
+  chatState = { step: "msg", draft: {} };
+  botSay("Sure! Type your question or message for our team. (Type <b>cancel</b> to stop.)");
+}
+
+function saveInquiry() {
+  const cu = getCurrentUser();
+  const d = chatState.draft;
+  const inq = {
+    id: "IQ" + Date.now().toString().slice(-6),
+    name: d.name, phone: d.phone, email: cu ? cu.email : "",
+    message: d.message, date: todayStr(), status: "Open"
+  };
+  const list = getInquiries(); list.push(inq); saveInquiries(list);
+  chatState = { step: null, draft: {} };
+  botSay(`Thanks ${esc(inq.name)}! Your message is saved (ref <b>${inq.id}</b>). Our team will contact you soon.` +
+    (cu ? "<br>You can see it in " + chatLink("profile", "My Profile") + "." : ""));
+  if (document.querySelector('section[data-page="profile"]').classList.contains("active")) renderProfile();
+}
+
+function sendChat() {
+  const input = document.getElementById("chatInput");
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = "";
+  addChat("user", text);
+
+  // Leaving a message for the team (step-by-step)
+  if (chatState.step) {
+    if (text.toLowerCase() === "cancel") {
+      chatState = { step: null, draft: {} };
+      botSay("No problem, cancelled. Ask me anything else.");
+      return;
+    }
+    const cu = getFullUser();
+    if (chatState.step === "msg") {
+      chatState.draft.message = text;
+      if (cu) {
+        chatState.draft.name = cu.name;
+        chatState.draft.phone = cu.phone || "not given";
+        saveInquiry();
+      } else {
+        chatState.step = "name";
+        botSay("Got it. What is your name?");
+      }
+    } else if (chatState.step === "name") {
+      chatState.draft.name = text;
+      chatState.step = "phone";
+      botSay("Thanks. What phone number can we reach you on?");
+    } else if (chatState.step === "phone") {
+      if (!/^[0-9+\-\s]{8,15}$/.test(text)) {
+        botSay("That number doesn't look right. Enter 8 to 15 digits, or type <b>cancel</b>.");
+        return;
+      }
+      chatState.draft.phone = text;
+      saveInquiry();
+    }
+    return;
+  }
+
+  const reply = getBotReply(text);
+  if (reply === "TALK") startInquiry();
+  else botSay(reply);
+}
+
+function getBotReply(text) {
+  const t = text.toLowerCase();
+  const user = getFullUser();
+
+  if (/talk to team|human|agent|staff|call me|contact|complaint|shikayat|callback/.test(t)) return "TALK";
+
+  if (/(my|mera|meri|mere).*(plan|membership|booking|attendance|payment)/.test(t)) {
+    if (!user) return "Please " + chatLink("login", "log in") + " to see your plan, bookings and attendance.";
+    const today = todayStr();
+    const m = user.membership;
+    const bookings = getBookings().filter(b => b.email === user.email).length;
+    const days = new Set(getAttendance().filter(a => a.email === user.email && a.date.startsWith(today.slice(0, 7))).map(a => a.date)).size;
+    return `Hi ${esc(user.name)}!<br>Plan: <b>${m && m.end >= today ? esc(m.plan) + " (till " + fmtDate(m.end) + ")" : "none active"}</b><br>` +
+      `Booked classes: <b>${bookings}</b><br>Days attended this month: <b>${days}</b><br>` + chatLink("profile", "Open My Profile");
+  }
+
+  if (/^(hi|hello|hey|hii|namaste|hola)\b/.test(t)) return "Hello! 👋 How can I help you today?";
+  if (/thank|thanks|shukriya|dhanyavad/.test(t)) return "You're welcome! Anything else I can help with?";
+
+  if (/timing|time|open|close|hours|kab|schedule/.test(t)) {
+    return "<b>Gym hours</b><br>" + GYM_HOURS + "<br><br><b>Class timings</b><br>" +
+      classesData.map(c => esc(c.title) + ": " + esc(c.time)).join("<br>");
+  }
+  if (/fee|fees|price|pricing|cost|plan|membership|kitna|charges/.test(t)) {
+    return "<b>Membership plans (per month)</b><br>Basic: Rs " + planPrices.Basic + "<br>Pro: Rs " + planPrices.Pro +
+      " (all classes included)<br>Elite: Rs " + planPrices.Elite + " (personal trainer + diet plan)<br><br>" +
+      chatLink("pricing", "See plans and join");
+  }
+  if (/class|hiit|yoga|zumba|strength/.test(t)) {
+    return "<b>Our classes</b><br>" + classesData.map(c => esc(c.title) + " - Rs " + c.price + "/month").join("<br>") +
+      "<br>Pro and Elite members book classes free.<br><br>" + chatLink("classes", "Browse and book classes");
+  }
+  if (/trainer|coach|instructor/.test(t)) {
+    return "<b>Our trainers</b><br>" + trainersData.map(x => esc(x.name) + " - " + esc(x.role)).join("<br>") +
+      "<br><br>" + chatLink("trainers", "Meet the trainers");
+  }
+  if (/diet|nutrition|weight loss|weight gain|food|khana/.test(t)) {
+    return "We have sample <b>Weight Loss</b> and <b>Weight Gain</b> meal plans. The Elite plan includes a personal diet plan.<br><br>" + chatLink("diet", "View diet plans");
+  }
+  if (/refund/.test(t)) {
+    return "There is no online payment on this website, so no refund is needed for website bookings. For any fee questions, tap <b>Talk to team</b>.";
+  }
+  if (/pay|upi|card|cash|payment/.test(t)) {
+    return "Bookings and plans are confirmed on the website without online payment. Fees are collected at the <b>gym reception</b>. Your bookings are listed in " + chatLink("profile", "My Profile") + ".";
+  }
+  if (/attend|check.?in|present/.test(t)) {
+    return "Open " + chatLink("profile", "My Profile") + ", then tap <b>Gym check-in</b> or <b>Mark attendance</b> on a booked class. Your monthly calendar and attendance % update automatically.";
+  }
+  if (/cancel/.test(t)) {
+    return "Go to " + chatLink("profile", "My Profile") + " > My bookings > <b>Cancel</b> next to the class.";
+  }
+  if (/join|register|sign ?up|book|admission|kaise/.test(t)) {
+    return "1) " + chatLink("register", "Create your account") + "<br>2) Choose a plan<br>3) Book your classes<br>4) Show up and mark attendance<br><br>" + chatLink("join-process", "See the full process");
+  }
+
+  return "I'm not sure about that one. Tap <b>Talk to team</b> below or " + `<a class="chat-link" onclick="startInquiry()">leave a message</a>` + " and our staff will get back to you.";
+}
+
+/* ---------- init ---------- */
+document.getElementById("menuToggle").addEventListener("click", () => {
+  document.getElementById("navLinks").classList.toggle("open");
+});
+
+document.getElementById("chatChips").innerHTML =
+  chatChips.map(c => `<button onclick="chatQuick('${c[1]}')">${c[0]}</button>`).join("");
+
+updateNavbar();
+navigate("home");
+</script>
+
+</body>
+</html>

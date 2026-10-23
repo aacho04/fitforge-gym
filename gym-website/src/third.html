@@ -1,0 +1,2881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PowerFit Gym</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', sans-serif; background: #4d2727; color: #fff; }
+a { text-decoration: none; cursor: pointer; }
+
+.navbar {
+  display: flex; justify-content: space-between; align-items: center;
+  background: #0d0d0d; padding: 18px 40px; border-bottom: 1px solid #262626;
+  position: sticky; top: 0; z-index: 100;
+}
+.navbar .logo { font-size: 24px; font-weight: 700; color: #fff; letter-spacing: 1px; }
+.navbar .logo span { color: #ff4c29; }
+.nav-links { display: flex; gap: 26px; align-items: center; flex-wrap: wrap; }
+.nav-links a { color: #ccc; font-size: 15px; font-weight: 500; }
+.nav-links a:hover, .nav-links a.active { color: #ff4c29; }
+.nav-links button {
+  background: #ff4c29; color: white; border: none; padding: 9px 20px;
+  border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 14px;
+}
+.menu-toggle { display: none; font-size: 26px; background: none; border: none; color: white; cursor: pointer; }
+
+.btn-primary {
+  background: #ff4c29; color: white; border: none; padding: 12px 30px;
+  border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 15px; display: inline-block;
+}
+.btn-primary:disabled { background: #444; color: #999; cursor: not-allowed; }
+.btn-outline {
+  background: transparent; color: white; border: 2px solid #ff4c29; padding: 10px 28px;
+  border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 15px; display: inline-block;
+}
+.btn-outline:disabled { border-color: #444; color: #777; cursor: not-allowed; }
+.btn-small { padding: 7px 16px; font-size: 13px; }
+
+.hero {
+  background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)),
+    url('https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1600') center/cover no-repeat;
+  min-height: 85vh; display: flex; flex-direction: column; justify-content: center;
+  align-items: center; text-align: center; padding: 40px 20px;
+}
+.hero h1 { font-size: 48px; font-weight: 700; max-width: 800px; line-height: 1.2; margin-bottom: 20px; }
+.hero h1 span { color: #ff4c29; }
+.hero p { font-size: 18px; color: #ddd; max-width: 550px; margin-bottom: 30px; }
+.hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+
+.features {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px; padding: 70px 60px; background: #111;
+}
+.feature-card {
+  background: #1a1a1a; padding: 30px 24px; border-radius: 10px; text-align: center;
+  border: 1px solid #262626; transition: transform 0.2s, border 0.2s;
+}
+.feature-card:hover { transform: translateY(-5px); border-color: #ff4c29; }
+.feature-card .icon { font-size: 36px; margin-bottom: 16px; }
+.feature-card h3 { font-size: 18px; margin-bottom: 10px; }
+.feature-card p { font-size: 14px; color: #aaa; line-height: 1.6; }
+
+.cta { background: #ff4c29; text-align: center; padding: 60px 20px; }
+.cta h2 { font-size: 30px; margin-bottom: 12px; }
+.cta p { font-size: 16px; margin-bottom: 24px; color: #fff2ef; }
+.cta .btn-primary { background: #0d0d0d; }
+
+.section-title { text-align: center; padding: 60px 20px 20px; }
+.section-title h2 { font-size: 32px; margin-bottom: 10px; }
+.section-title p { color: #aaa; font-size: 15px; max-width: 500px; margin: 0 auto; }
+
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; padding: 20px 60px 80px; }
+.card { background: #1a1a1a; border-radius: 10px; overflow: hidden; border: 1px solid #262626; transition: transform 0.2s; }
+.card:hover { transform: translateY(-5px); }
+.card img { width: 100%; height: 180px; object-fit: cover; }
+.card-body { padding: 20px; }
+.card-body h3 { margin-bottom: 8px; }
+.card-body p { color: #aaa; font-size: 14px; line-height: 1.6; margin-bottom: 14px; }
+.card-price { color: #ff4c29; font-weight: 700; font-size: 14px; margin-bottom: 12px; }
+
+.price-card { background: #1a1a1a; border: 1px solid #262626; border-radius: 10px; padding: 40px 30px; text-align: center; }
+.price-card.featured { border: 2px solid #ff4c29; }
+.price-card h3 { font-size: 20px; margin-bottom: 10px; }
+.price-card .price { font-size: 40px; font-weight: 700; color: #ff4c29; margin-bottom: 20px; }
+.price-card .price span { font-size: 15px; color: #aaa; }
+.price-card ul { list-style: none; margin-bottom: 25px; text-align: left; }
+.price-card ul li { padding: 8px 0; color: #ccc; font-size: 14px; border-bottom: 1px solid #262626; }
+
+.auth-form { max-width: 400px; margin: 60px auto; background: #1a1a1a; padding: 35px; border-radius: 10px; border: 1px solid #262626; }
+.auth-form h2 { margin-bottom: 22px; text-align: center; }
+.auth-form input { width: 100%; padding: 11px; margin-bottom: 14px; border: 1px solid #333; border-radius: 6px; background: #0d0d0d; color: #fff; font-family: inherit; }
+.auth-form button { width: 100%; padding: 11px; background: #ff4c29; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 15px; }
+.auth-form p { text-align: center; margin-top: 14px; color: #aaa; font-size: 14px; }
+.auth-form a { color: #ff4c29; }
+.error-msg { color: #ff6b6b; margin-bottom: 10px; text-align: center; font-size: 14px; }
+.success-msg { color: #6bff8f; margin-bottom: 10px; text-align: center; font-size: 14px; }
+
+.empty-state { text-align: center; color: #888; padding: 30px 0; }
+
+footer { background: #0d0d0d; border-top: 1px solid #262626; text-align: center; padding: 25px; color: #777; font-size: 14px; }
+
+section[data-page] { display: none; }
+section[data-page].active { display: block; }
+
+@media (max-width: 768px) {
+  .menu-toggle { display: block; }
+  .nav-links {
+    position: absolute; top: 64px; left: 0; right: 0; background: #0d0d0d;
+    flex-direction: column; padding: 20px; display: none; align-items: flex-start;
+  }
+  .nav-links.open { display: flex; }
+  .hero h1 { font-size: 30px; }
+  .features, .card-grid { padding: 50px 20px; }
+}
+
+/* ===== Diet Plan + Join Process + Modal styles ===== */
+.diet-toggle { display: flex; justify-content: center; gap: 14px; margin: 0 20px 40px; flex-wrap: wrap; }
+.diet-toggle button {
+  background: transparent; border: 2px solid #ff4c29; color: #fff; padding: 10px 26px;
+  border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 14px;
+}
+.diet-toggle button.active { background: #ff4c29; }
+
+.diet-wrap { max-width: 900px; margin: 0 auto 80px; padding: 0 20px; }
+.diet-note { text-align: center; color: #aaa; font-size: 14px; margin-bottom: 26px; }
+.diet-table { width: 100%; border-collapse: collapse; background: #1a1a1a; border: 1px solid #262626; border-radius: 10px; overflow: hidden; }
+.diet-table th, .diet-table td { padding: 14px 18px; text-align: left; border-bottom: 1px solid #262626; font-size: 14px; }
+.diet-table th { background: #151515; color: #ff4c29; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
+.diet-table tr:last-child td { border-bottom: none; }
+.diet-table td:first-child { color: #fff; font-weight: 600; white-space: nowrap; width: 130px; }
+.diet-table td:last-child { color: #ccc; }
+
+.process-steps { max-width: 800px; margin: 0 auto 80px; padding: 0 20px; }
+.process-step { display: flex; gap: 20px; background: #1a1a1a; border: 1px solid #262626; border-radius: 10px; padding: 22px 26px; margin-bottom: 16px; align-items: flex-start; }
+.process-step .step-num { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; background: #ff4c29; color: #0d0d0d; font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+.process-step h3 { margin-bottom: 6px; font-size: 17px; }
+.process-step p { color: #aaa; font-size: 14px; line-height: 1.6; }
+
+.modal-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+  z-index: 999; align-items: center; justify-content: center; padding: 20px; overflow-y: auto;
+}
+.modal-overlay.open { display: flex; }
+.modal-box { background: #1a1a1a; border: 1px solid #262626; border-radius: 10px; padding: 34px 30px; max-width: 420px; width: 100%; text-align: center; }
+.modal-box h3 { font-size: 22px; margin-bottom: 10px; }
+.modal-box p { color: #aaa; font-size: 14px; margin-bottom: 22px; line-height: 1.6; }
+.modal-buttons { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 14px; }
+.modal-close { background: none; border: none; color: #777; font-size: 13px; cursor: pointer; text-decoration: underline; display: block; margin: 12px auto 0; }
+
+/* ===== Payment modal ===== */
+.pay-box { max-width: 460px; text-align: left; }
+.pay-box h3 { text-align: center; }
+.pay-summary { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: #0d0d0d; border: 1px solid #262626; border-radius: 8px; padding: 14px 16px; margin: 16px 0 20px; font-size: 14px; }
+.pay-summary strong { color: #ff4c29; font-size: 18px; white-space: nowrap; }
+.pay-fields .hint { color: #aaa; font-size: 13px; line-height: 1.6; margin-bottom: 12px; }
+.pay-submit { width: 100%; }
+.receipt { background: #0d0d0d; border: 1px solid #262626; border-radius: 8px; padding: 6px 16px; margin: 16px 0 20px; }
+.receipt div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid #262626; font-size: 14px; color: #ccc; }
+.receipt div:last-child { border-bottom: none; }
+.receipt div span:last-child { color: #fff; text-align: right; }
+.tick { width: 54px; height: 54px; border-radius: 50%; background: #1f6f3f; color: #fff; font-size: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
+
+.pay-methods { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px; }
+.pay-method { background: #0d0d0d; border: 1px solid #333; color: #ccc; padding: 11px 12px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; font-family: inherit; text-align: left; }
+.pay-method small { display: block; font-weight: 400; color: #888; font-size: 11px; margin-top: 2px; }
+.pay-method.active { border-color: #ff4c29; color: #fff; background: rgba(255,76,41,0.12); }
+.pay-fields label { display: block; font-size: 12px; color: #aaa; margin-bottom: 5px; }
+.pay-fields input, .pay-fields select { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #333; border-radius: 6px; background: #0d0d0d; color: #fff; font-family: inherit; font-size: 14px; }
+.pay-fields .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.pay-demo { color: #777; font-size: 12px; text-align: center; margin: 12px 0 0; line-height: 1.5; }
+#payError:empty { display: none; }
+.upi-box { text-align: center; margin-bottom: 14px; }
+.upi-box img { background: #fff; padding: 8px; border-radius: 8px; }
+.upi-box .hint { margin-top: 8px; }
+
+/* ===== Profile page ===== */
+.profile-wrap { max-width: 1050px; margin: 0 auto; padding: 40px 20px 80px; }
+.profile-head { display: flex; align-items: center; gap: 22px; background: #1a1a1a; border: 1px solid #262626; border-radius: 10px; padding: 26px; margin-bottom: 24px; flex-wrap: wrap; }
+.avatar { width: 76px; height: 76px; border-radius: 50%; background: #ff4c29; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; flex-shrink: 0; }
+.profile-head h2 { font-size: 26px; margin-bottom: 4px; }
+.profile-head p { color: #aaa; font-size: 14px; }
+.profile-head .head-actions { margin-left: auto; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.badge.good { background: rgba(107,255,143,0.15); color: #6bff8f; }
+.badge.warn { background: rgba(255,180,60,0.15); color: #ffb43c; }
+.badge.mute { background: #262626; color: #aaa; }
+.panel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 24px; margin-bottom: 24px; }
+.panel { background: #1a1a1a; border: 1px solid #262626; border-radius: 10px; padding: 24px; margin-bottom: 24px; }
+.panel-grid .panel { margin-bottom: 0; }
+.panel h3 { font-size: 18px; margin-bottom: 4px; }
+.panel .sub { color: #aaa; font-size: 13px; margin-bottom: 18px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-grid label { display: block; font-size: 12px; color: #aaa; margin-bottom: 5px; }
+.form-grid input, .form-grid select { width: 100%; padding: 10px; border: 1px solid #333; border-radius: 6px; background: #0d0d0d; color: #fff; font-family: inherit; font-size: 14px; }
+.form-grid .full { grid-column: 1 / -1; }
+.form-grid input[readonly] { color: #777; }
+.save-row { display: flex; align-items: center; gap: 14px; margin-top: 16px; }
+.save-msg { color: #6bff8f; font-size: 13px; }
+.info-list div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid #262626; font-size: 14px; color: #aaa; }
+.info-list div:last-child { border-bottom: none; }
+.info-list div span:last-child { color: #fff; text-align: right; }
+.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+.stat { background: #0d0d0d; border: 1px solid #262626; border-radius: 8px; padding: 12px; text-align: center; }
+.stat b { display: block; font-size: 22px; color: #ff4c29; }
+.stat span { font-size: 12px; color: #aaa; }
+.cal-title { font-size: 14px; color: #ccc; margin-bottom: 10px; font-weight: 600; }
+.calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 16px; }
+.cal-head { text-align: center; font-size: 11px; color: #777; padding-bottom: 2px; }
+.cal-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 6px; background: #0d0d0d; font-size: 12px; color: #888; }
+.cal-day.present { background: #ff4c29; color: #fff; font-weight: 700; }
+.cal-day.today { outline: 2px solid #fff; }
+.cal-day.future { opacity: 0.4; }
+.recent-att { font-size: 13px; color: #aaa; margin-top: 14px; }
+.recent-att div { padding: 6px 0; border-bottom: 1px solid #262626; display: flex; justify-content: space-between; }
+.booking-row { background: #0d0d0d; border: 1px solid #262626; border-radius: 8px; padding: 14px 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+.booking-row .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.booking-row .cancel-btn { background: transparent; border: 1px solid #ff6b6b; color: #ff6b6b; padding: 6px 14px; border-radius: 5px; cursor: pointer; font-size: 13px; }
+.table-scroll { overflow-x: auto; }
+.pay-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.pay-table th, .pay-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #262626; white-space: nowrap; }
+.pay-table th { color: #ff4c29; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+.pay-table td { color: #ccc; }
+.inq-row { background: #0d0d0d; border: 1px solid #262626; border-radius: 8px; padding: 14px 16px; margin-bottom: 10px; font-size: 14px; color: #ccc; }
+.inq-row .inq-top { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; font-size: 12px; color: #888; }
+.inq-row .inq-reply { margin-top: 10px; padding: 10px 12px; border-left: 3px solid #ff4c29; background: #151515; font-size: 13px; color: #ddd; }
+@media (max-width: 480px) { .panel-grid { grid-template-columns: 1fr; } .form-grid { grid-template-columns: 1fr; } }
+
+/* ===== Customer inquiry chat ===== */
+.chat-fab {
+  position: fixed; right: 22px; bottom: 22px; width: 58px; height: 58px; border-radius: 50%;
+  background: #ff4c29; color: #fff; border: none; font-size: 26px; cursor: pointer; z-index: 900;
+  box-shadow: 0 6px 20px rgba(255,76,41,0.4);
+}
+.chat-panel {
+  position: fixed; right: 22px; bottom: 92px; width: 350px; height: 500px; max-height: calc(100vh - 120px);
+  background: #1a1a1a; border: 1px solid #262626; border-radius: 12px; z-index: 900;
+  display: none; flex-direction: column; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+}
+.chat-panel.open { display: flex; }
+.chat-head { background: #ff4c29; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; }
+.chat-head strong { display: block; font-size: 16px; }
+.chat-head span { font-size: 12px; color: #fff2ef; }
+.chat-head button { background: none; border: none; color: #fff; font-size: 18px; cursor: pointer; }
+.chat-messages { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.msg { max-width: 85%; padding: 10px 13px; border-radius: 12px; font-size: 14px; line-height: 1.5; word-wrap: break-word; }
+.msg.bot { background: #262626; color: #ddd; align-self: flex-start; border-bottom-left-radius: 3px; }
+.msg.user { background: #ff4c29; color: #fff; align-self: flex-end; border-bottom-right-radius: 3px; }
+.msg .chat-link { color: #ff4c29; font-weight: 600; text-decoration: underline; }
+.msg.typing { color: #888; font-style: italic; }
+.chat-chips { display: flex; gap: 6px; flex-wrap: wrap; padding: 8px 12px; border-top: 1px solid #262626; max-height: 92px; overflow-y: auto; }
+.chat-chips button { background: transparent; border: 1px solid #ff4c29; color: #fff; padding: 5px 10px; border-radius: 16px; font-size: 12px; cursor: pointer; }
+.chat-chips button:hover { background: rgba(255,76,41,0.2); }
+.chat-input { display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid #262626; }
+.chat-input input { flex: 1; padding: 10px; border: 1px solid #333; border-radius: 6px; background: #0d0d0d; color: #fff; font-family: inherit; font-size: 14px; }
+.chat-input button { background: #ff4c29; color: #fff; border: none; padding: 0 16px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+@media (max-width: 480px) {
+  .chat-panel { right: 10px; left: 10px; width: auto; bottom: 86px; height: 70vh; }
+  .chat-fab { right: 14px; bottom: 14px; }
+}
+
+/* ===== Class search/filter + seats ===== */
+.class-toolbar { max-width: 1000px; margin: 0 auto; padding: 0 60px 10px; display: flex; flex-direction: column; gap: 14px; align-items: center; }
+.class-search { width: 100%; max-width: 420px; padding: 11px 16px; border: 1px solid #333; border-radius: 20px; background: #1a1a1a; color: #fff; font-family: inherit; font-size: 14px; }
+.class-filters { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.class-filters button { background: transparent; border: 1px solid #ff4c29; color: #fff; padding: 6px 16px; border-radius: 16px; font-size: 13px; cursor: pointer; }
+.class-filters button.active { background: #ff4c29; }
+@media (max-width: 768px) { .class-toolbar { padding: 0 20px 10px; } }
+.seats-wrap { margin-bottom: 12px; }
+.seats-bar { height: 6px; border-radius: 4px; background: #262626; overflow: hidden; margin-bottom: 6px; }
+.seats-bar-fill { height: 100%; background: #ff4c29; }
+.seats-bar-fill.full { background: #ff6b6b; }
+.seats-text { font-size: 12px; color: #aaa; }
+.seats-text.full { color: #ff6b6b; font-weight: 600; }
+
+/* ===== Video section ===== */
+.video-section { background: #111; padding: 70px 60px; text-align: center; }
+.video-frame { max-width: 820px; margin: 26px auto 0; border-radius: 12px; overflow: hidden; border: 1px solid #262626; }
+.video-frame video { width: 100%; display: block; background: #000; }
+@media (max-width: 768px) { .video-section { padding: 50px 20px; } }
+
+/* ===== Testimonials ===== */
+.testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; padding: 20px 60px 70px; }
+.testimonial-card { background: #1a1a1a; border: 1px solid #262626; border-radius: 10px; padding: 26px; }
+.testimonial-stars { color: #ffb43c; margin-bottom: 12px; font-size: 15px; }
+.testimonial-card p.quote { color: #ccc; font-size: 14px; line-height: 1.7; margin-bottom: 16px; }
+.testimonial-who { display: flex; align-items: center; gap: 12px; }
+.testimonial-avatar { width: 40px; height: 40px; border-radius: 50%; background: #ff4c29; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+.testimonial-who b { display: block; font-size: 14px; }
+.testimonial-who span { font-size: 12px; color: #888; }
+@media (max-width: 768px) { .testimonial-grid { padding: 20px 20px 60px; } }
+
+/* ===== FAQ ===== */
+.faq-wrap { max-width: 800px; margin: 0 auto 80px; padding: 0 20px; }
+.faq-item { background: #1a1a1a; border: 1px solid #262626; border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
+.faq-q { padding: 18px 22px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 15px; }
+.faq-q .plus { color: #ff4c29; font-size: 20px; transition: transform 0.2s; flex-shrink: 0; margin-left: 12px; }
+.faq-item.open .faq-q .plus { transform: rotate(45deg); }
+.faq-a { max-height: 0; overflow: hidden; transition: max-height 0.25s ease; padding: 0 22px; }
+.faq-item.open .faq-a { max-height: 220px; padding: 0 22px 18px; }
+.faq-a p { color: #aaa; font-size: 14px; line-height: 1.6; }
+
+/* ===== Referral panel ===== */
+.referral-code-box { display: flex; gap: 10px; align-items: center; background: #0d0d0d; border: 1px dashed #ff4c29; border-radius: 8px; padding: 12px 16px; margin-bottom: 14px; flex-wrap: wrap; }
+.referral-code-box code { color: #ff4c29; font-weight: 700; font-size: 16px; letter-spacing: 1px; }
+.referral-stat-row { display: flex; gap: 10px; margin-top: 14px; }
+
+/* ===== Progress tracker ===== */
+.progress-form { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.progress-form input { flex: 1; min-width: 120px; padding: 9px 12px; border: 1px solid #333; border-radius: 6px; background: #0d0d0d; color: #fff; font-family: inherit; font-size: 14px; }
+.progress-chart { display: flex; align-items: flex-end; gap: 6px; height: 120px; padding: 10px 4px; border-bottom: 1px solid #262626; margin-bottom: 8px; overflow-x: auto; }
+.progress-bar-col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; min-width: 30px; flex: 1; }
+.progress-bar-col .bar { width: 18px; background: #ff4c29; border-radius: 3px 3px 0 0; min-height: 3px; }
+.progress-bar-col .lbl { font-size: 10px; color: #888; margin-top: 4px; white-space: nowrap; }
+.progress-bar-col .val { font-size: 10px; color: #ccc; margin-bottom: 3px; }
+
+/* ===== Trainer request ===== */
+.trainer-req-btn { margin-top: 12px; }
+.tr-modal select, .tr-modal input { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #333; border-radius: 6px; background: #0d0d0d; color: #fff; font-family: inherit; font-size: 14px; }
+.tr-modal label { display: block; font-size: 12px; color: #aaa; margin-bottom: 5px; text-align: left; }
+
+/* ===== Admin dashboard ===== */
+.admin-wrap { max-width: 1200px; margin: 0 auto; padding: 36px 20px 80px; }
+.admin-top { display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 20px; }
+.admin-top h2 { font-size: 28px; margin-bottom: 4px; }
+.admin-top p { color: #aaa; font-size: 14px; }
+.admin-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #262626; }
+.admin-tabs button { background: transparent; border: 1px solid #333; color: #ccc; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; font-family: inherit; }
+.admin-tabs button:hover { border-color: #ff4c29; }
+.admin-tabs button.active { background: #ff4c29; border-color: #ff4c29; color: #fff; }
+.admin-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 24px; }
+.admin-stat { background: #1a1a1a; border: 1px solid #262626; border-radius: 10px; padding: 18px; }
+.admin-stat b { display: block; font-size: 26px; margin-bottom: 4px; }
+.admin-stat span { font-size: 13px; color: #aaa; }
+.admin-stat.accent b { color: #ff4c29; }
+.admin-toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+.admin-toolbar input, .admin-toolbar select { padding: 9px 12px; border: 1px solid #333; border-radius: 6px; background: #0d0d0d; color: #fff; font-family: inherit; font-size: 14px; }
+.admin-toolbar .grow { flex: 1; min-width: 180px; }
+.admin-table input, .admin-table select { padding: 6px 8px; border: 1px solid #333; border-radius: 5px; background: #0d0d0d; color: #fff; font-family: inherit; font-size: 13px; }
+.admin-table td .act-row { display: flex; gap: 6px; }
+.admin-table .who b { display: block; color: #fff; font-weight: 600; }
+.admin-table .who span { color: #888; font-size: 12px; }
+.mini-btn { background: transparent; border: 1px solid #ff4c29; color: #ff4c29; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; font-family: inherit; font-weight: 600; }
+.mini-btn.danger { border-color: #ff6b6b; color: #ff6b6b; }
+.mini-btn.ok { border-color: #6bff8f; color: #6bff8f; }
+.bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 13px; color: #ccc; }
+.bar-row .name { width: 120px; flex-shrink: 0; }
+.bar-row .track { flex: 1; height: 8px; background: #262626; border-radius: 4px; overflow: hidden; }
+.bar-row .fill { height: 100%; background: #ff4c29; }
+.bar-row .amt { width: 90px; text-align: right; color: #fff; flex-shrink: 0; }
+.add-class-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; align-items: end; }
+.add-class-grid label { display: block; font-size: 12px; color: #aaa; margin-bottom: 5px; }
+.add-class-grid input { width: 100%; padding: 9px 10px; border: 1px solid #333; border-radius: 6px; background: #0d0d0d; color: #fff; font-family: inherit; font-size: 14px; }
+@media (max-width: 480px) { .bar-row .name { width: 80px; } }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a onclick="navigate('home')" class="logo">POWER<span>FIT</span></a>
+  <button class="menu-toggle" id="menuToggle">&#9776;</button>
+  <div class="nav-links" id="navLinks">
+    <a onclick="navigate('home')">Home</a>
+    <a onclick="navigate('classes')">Classes</a>
+    <a onclick="navigate('trainers')">Trainers</a>
+    <a onclick="navigate('pricing')">Pricing</a>
+    <a onclick="navigate('diet')">Diet Plans</a>
+    <a onclick="navigate('join-process')">How to Join</a>
+    <span id="authLinks"></span>
+  </div>
+</nav>
+
+<section data-page="home">
+  <div class="hero">
+    <h1>Transform your body, <span>transform your life</span></h1>
+    <p>Join PowerFit and get access to world-class trainers, equipment, and a community that pushes you to be your best.</p>
+    <div class="hero-buttons">
+      <a onclick="navigate('register')" class="btn-primary">Join Now</a>
+      <a onclick="navigate('classes')" class="btn-outline">View Classes</a>
+    </div>
+  </div>
+  <div class="section-title"><h2>Why choose PowerFit</h2><p>Everything you need under one roof to reach your fitness goals</p></div>
+  <div class="features">
+    <div class="feature-card"><div class="icon">🏋️</div><h3>Modern Equipment</h3><p>Top of the line machines and free weights for every kind of workout.</p></div>
+    <div class="feature-card"><div class="icon">👨‍🏫</div><h3>Expert Trainers</h3><p>Certified trainers who design personalized plans for your goals.</p></div>
+    <div class="feature-card"><div class="icon">📅</div><h3>Flexible Classes</h3><p>Book HIIT, Yoga, Zumba and Strength classes anytime that suits you.</p></div>
+    <div class="feature-card"><div class="icon">💪</div><h3>Proven Results</h3><p>Thousands of members have transformed their bodies with our programs.</p></div>
+  </div>
+  <div class="video-section">
+    <div class="section-title" style="padding-top:0;"><h2>Take a look inside</h2><p>A quick tour of the floor, the equipment and the energy at PowerFit</p></div>
+    <div class="video-frame">
+      <video controls poster="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1000">
+        <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+    <p style="color:#777; font-size:12px; margin-top:10px;">Sample placeholder video — swap the &lt;source&gt; link with your own gym tour video.</p>
+  </div>
+
+  <div class="section-title"><h2>What our members say</h2><p>Real results from real PowerFit members</p></div>
+  <div class="testimonial-grid" id="testimonialGrid"></div>
+
+  <div class="section-title"><h2>Frequently asked questions</h2><p>Quick answers to what new members usually ask</p></div>
+  <div class="faq-wrap" id="faqWrap"></div>
+
+  <div class="cta">
+    <h2>Ready to start your journey?</h2>
+    <p>Get your first week free when you join today.</p>
+    <a onclick="navigate('register')" class="btn-primary">Get Started</a>
+  </div>
+</section>
+
+<section data-page="classes">
+  <div class="section-title"><h2>Our Classes</h2><p>Pick a class that fits your goals and schedule</p></div>
+  <div class="class-toolbar">
+    <input id="classSearchInput" class="class-search" type="text" placeholder="Search classes..." oninput="onClassSearch()" />
+    <div class="class-filters" id="classFilters"></div>
+  </div>
+  <div class="card-grid" id="classesGrid"></div>
+</section>
+
+
+<section data-page="trainers">
+  <div class="section-title"><h2>Meet Our Trainers</h2><p>Certified professionals dedicated to your progress. 1-on-1 sessions are Rs 500 each, free on the Elite plan.</p></div>
+  <div class="card-grid" id="trainersGrid"></div>
+</section>
+
+<section data-page="pricing">
+  <div class="section-title"><h2>Membership Plans</h2><p>Choose the plan that works best for you</p></div>
+  <div class="card-grid">
+    <div class="price-card"><h3>Basic</h3><p class="price">Rs 3000<span>/mo</span></p><ul><li>Gym access</li><li>Locker room</li><li>2 classes/month</li></ul><button class="btn-outline" onclick="choosePlan('Basic')">Choose Plan</button></div>
+    <div class="price-card featured"><h3>Pro</h3><p class="price">Rs 5000<span>/mo</span></p><ul><li>Unlimited gym access</li><li>All classes included</li><li>1 trainer session/week</li></ul><button class="btn-primary" onclick="choosePlan('Pro')">Choose Plan</button></div>
+    <div class="price-card"><h3>Elite</h3><p class="price">Rs 8000<span>/mo</span></p><ul><li>Unlimited everything</li><li>Personal trainer</li><li>Diet plan included</li></ul><button class="btn-outline" onclick="choosePlan('Elite')">Choose Plan</button></div>
+  </div>
+</section>
+
+<section data-page="login">
+  <div class="auth-form">
+    <h2>Login</h2>
+    <div id="loginMsg"></div>
+    <input id="loginEmail" type="email" placeholder="Email" />
+    <input id="loginPassword" type="password" placeholder="Password" onkeydown="if(event.key==='Enter')loginUser()" />
+    <button onclick="loginUser()">Login</button>
+    <p>Don't have an account? <a onclick="navigate('register')">Register</a></p>
+  </div>
+</section>
+
+<section data-page="register">
+  <div class="auth-form">
+    <h2>Join PowerFit</h2>
+    <div id="registerMsg"></div>
+    <input id="registerName" placeholder="Full Name" />
+    <input id="registerEmail" type="email" placeholder="Email" />
+    <input id="registerPhone" type="tel" placeholder="Phone number" />
+    <input id="registerPassword" type="password" placeholder="Password" />
+    <input id="registerReferral" placeholder="Referral code (optional)" />
+    <button id="registerSubmitBtn" onclick="registerUser()">Create Account</button>
+    <p>Already a member? <a onclick="navigate('login')">Login</a></p>
+  </div>
+</section>
+
+<!-- Profile page (details, membership, attendance, bookings, history, inquiries) -->
+<section data-page="profile">
+  <div class="profile-wrap" id="profileRoot"></div>
+</section>
+
+<!-- Admin dashboard (admin login only) -->
+<section data-page="admin">
+  <div class="admin-wrap" id="adminRoot"></div>
+</section>
+
+<section data-page="diet">
+  <div class="section-title"><h2>Diet Plans</h2><p>Sample nutrition plans to match your fitness goal. Pair these with your trainer's advice.</p></div>
+  <div class="diet-toggle">
+    <button id="dietBtnLoss" onclick="renderDiet('loss')">Weight Loss</button>
+    <button id="dietBtnGain" onclick="renderDiet('gain')">Weight Gain</button>
+  </div>
+  <div class="diet-wrap">
+    <p class="diet-note" id="dietNote"></p>
+    <table class="diet-table">
+      <thead><tr><th>Meal</th><th>What to eat</th></tr></thead>
+      <tbody id="dietTableBody"></tbody>
+    </table>
+  </div>
+</section>
+
+<section data-page="join-process">
+  <div class="section-title"><h2>How to Join PowerFit</h2><p>From sign up to your first class, here's exactly what happens</p></div>
+  <div class="process-steps">
+    <div class="process-step">
+      <div class="step-num">1</div>
+      <div><h3>Create your account</h3><p>Register with your name, email, phone and a password. This takes less than a minute and gives you a member profile.</p></div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">2</div>
+      <div><h3>Choose your plan and pay</h3><p>Pick Basic, Pro or Elite. Pay online with UPI, card or net banking, or choose Pay at gym and settle at reception. Your plan and payment status show up on your profile.</p></div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">3</div>
+      <div><h3>Pick your diet plan</h3><p>Choose a Weight Loss or Weight Gain nutrition plan so your eating matches your training goal.</p></div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">4</div>
+      <div><h3>Book your first class</h3><p>Browse HIIT, Yoga, Strength or Zumba and reserve a slot. You'll see it under "My bookings" on your profile.</p></div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">5</div>
+      <div><h3>Show up and mark attendance</h3><p>Train, then mark your attendance from your profile. Your monthly attendance calendar tracks every visit.</p></div>
+    </div>
+  </div>
+  <div style="text-align:center; margin-bottom:80px;">
+    <a onclick="navigate('register')" class="btn-primary">Start Now</a>
+  </div>
+</section>
+
+<footer>&copy; 2026 PowerFit Gym. All rights reserved.</footer>
+
+<!-- Customer inquiry chat box -->
+<button class="chat-fab" id="chatFab" onclick="toggleChat()" aria-label="Open chat">💬</button>
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-head">
+    <div><strong>PowerFit Support</strong><span>Ask us anything</span></div>
+    <button onclick="toggleChat()" aria-label="Close chat">✕</button>
+  </div>
+  <div class="chat-messages" id="chatMessages"></div>
+  <div class="chat-chips" id="chatChips"></div>
+  <div class="chat-input">
+    <input id="chatInput" placeholder="Type your question..." autocomplete="off" onkeydown="if(event.key==='Enter')sendChat()" />
+    <button onclick="sendChat()">Send</button>
+  </div>
+</div>
+
+<!-- Diet suggestion modal (shown after joining) -->
+<div class="modal-overlay" id="dietModalOverlay">
+  <div class="modal-box">
+    <h3 id="dietModalTitle">Welcome to PowerFit!</h3>
+    <p id="dietModalText">Your account is ready. Pick a diet plan that matches your goal to get the most out of your training.</p>
+    <div class="modal-buttons">
+      <button class="btn-primary btn-small" onclick="goToDietFromModal('loss')">Weight Loss Plan</button>
+      <button class="btn-outline btn-small" onclick="goToDietFromModal('gain')">Weight Gain Plan</button>
+    </div>
+    <button class="modal-close" onclick="closeDietModal()">Maybe later</button>
+  </div>
+</div>
+
+<!-- Trainer 1-on-1 session request modal -->
+<div class="modal-overlay" id="trainerReqOverlay">
+  <div class="modal-box tr-modal">
+    <h3>Request a 1-on-1 session</h3>
+    <p id="trainerReqSub">Tell us when you'd like to train and we'll confirm with the trainer.</p>
+    <div style="text-align:left;">
+      <label>Preferred date</label>
+      <input id="trReqDate" type="date" />
+      <label>Preferred time</label>
+      <input id="trReqTime" type="time" />
+      <label>Anything specific you want to work on? (optional)</label>
+      <input id="trReqNote" type="text" placeholder="e.g. form check on squats" />
+    </div>
+    <button class="btn-primary pay-submit" id="trReqBtn" onclick="submitTrainerRequest()">Continue</button>
+    <button class="modal-close" onclick="closeTrainerRequest()">Cancel</button>
+  </div>
+</div>
+
+<!-- Payment modal: used for membership plans, class bookings and trainer sessions -->
+<div class="modal-overlay" id="payOverlay">
+  <div class="modal-box pay-box">
+    <div id="payStepForm">
+      <h3 id="confirmHeading">Complete payment</h3>
+      <div class="pay-summary"><span id="paySumTitle"></span><strong id="paySumAmount"></strong></div>
+      <div class="pay-methods" id="payMethods"></div>
+      <div class="pay-fields" id="payFields"></div>
+      <p class="error-msg" id="payError"></p>
+      <button class="btn-primary pay-submit" id="payBtn" onclick="submitPayment()">Pay</button>
+      <p class="pay-demo" id="payDemo">Demo mode: no real money is charged and card details are never saved.</p>
+      <button class="modal-close" onclick="closePayment()">Cancel</button>
+    </div>
+    <div id="payStepDone" style="display:none; text-align:center;">
+      <div class="tick">✓</div>
+      <h3 id="doneTitle">Booking confirmed</h3>
+      <div class="receipt" id="doneReceipt"></div>
+      <p class="hint" id="doneNote" style="margin-bottom:16px;"></p>
+      <div class="modal-buttons">
+        <button class="btn-primary btn-small" onclick="goToProfileFromPayment()">View my profile</button>
+        <button class="btn-outline btn-small" onclick="goToDietFromPayment()">Choose diet plan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- config ---------- */
+const TRAINER_SESSION_FEE = 500;
+
+/* =====================================================================
+   PAYMENT SETTINGS  <<< YAHAN APNI DETAILS DAALO >>>
+   1) RAZORPAY_KEY_ID : razorpay.com > Settings > API Keys se "Key Id" (rzp_test_... ya rzp_live_...)
+      Key Secret yahan KABHI mat daalna, sirf Key Id.
+      Khali chhodoge to site "demo mode" mein chalegi (koi asli paisa nahi katega).
+   2) GYM_UPI_ID      : gym ka UPI ID (jaise "powerfitgym@okhdfcbank"). Daalte hi
+      "Scan & pay (UPI)" option dikhne lagta hai. Khali = ye option band.
+   ===================================================================== */
+const RAZORPAY_KEY_ID = "";
+const GYM_UPI_ID = "";
+const GYM_UPI_NAME = "PowerFit Gym";
+const GYM_NAME = "PowerFit Gym";
+
+const LIVE_RAZORPAY = /^rzp_(test|live)_\w+$/.test(RAZORPAY_KEY_ID.trim());
+const RZP_TEST_MODE = RAZORPAY_KEY_ID.trim().indexOf("rzp_test_") === 0;
+const UPI_SCAN_LABEL = "UPI (scan & pay)";
+
+const defaultClasses = [
+  { id: 1, title: "HIIT Training", time: "Mon, Wed, Fri - 7:00 AM", price: 300, capacity: 15, category: "Cardio", desc: "High intensity interval training to burn fat fast.", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500" },
+  { id: 2, title: "Yoga Flow", time: "Tue, Thu - 6:00 PM", price: 250, capacity: 20, category: "Flexibility", desc: "Improve flexibility and reduce stress with guided yoga.", img: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500" },
+  { id: 3, title: "Strength Training", time: "Mon to Sat - 8:00 AM", price: 350, capacity: 12, category: "Strength", desc: "Build muscle with free weights and resistance machines.", img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500" },
+  { id: 4, title: "Zumba Dance", time: "Wed, Sat - 5:00 PM", price: 250, capacity: 18, category: "Dance", desc: "Fun cardio dance workout to upbeat music.", img: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=500" },
+];
+
+// Classes are loaded from Supabase gym_classes table (with localStorage & defaults as fallback)
+function gymClassFromRow(r) {
+  return {
+    id: Number(r.id),
+    title: r.title,
+    time: r.time,
+    price: Number(r.price),
+    capacity: Number(r.capacity || 15),
+    category: r.category || "General",
+    desc: r.description || "",
+    img: r.image_url || defaultClasses[0].img,
+    isActive: r.is_active !== false
+  };
+}
+
+function loadClasses() {
+  try {
+    const saved = JSON.parse(localStorage.getItem("gym_classes") || "null");
+    if (Array.isArray(saved) && saved.length > 0) return saved;
+  } catch (e) {}
+  return defaultClasses.map(c => Object.assign({}, c));
+}
+function saveClasses() { localStorage.setItem("gym_classes", JSON.stringify(classesData)); }
+let classesData = loadClasses();
+
+const trainersData = [
+  { name: "Ali Raza", role: "Strength Coach", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500" },
+  { name: "Sara Ahmed", role: "Yoga Instructor", img: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500" },
+  { name: "Bilal Khan", role: "HIIT Specialist", img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500" },
+];
+
+const planPrices = { Basic: 3000, Pro: 5000, Elite: 8000 };
+
+const testimonialsData = [
+  { name: "Rohit Verma", tag: "Pro member \u00b7 8 months", stars: 5, quote: "The trainers actually track your progress here. I dropped 9kg without feeling like I was starving myself." },
+  { name: "Meera Nair", tag: "Elite member \u00b7 1 year", stars: 5, quote: "Booking classes from the app is so simple, and the diet plan that came with my plan kept me consistent." },
+  { name: "Kunal Shah", tag: "Basic member \u00b7 3 months", stars: 4, quote: "Great equipment and the gym never feels too crowded even during peak hours." },
+];
+
+const faqData = [
+  { q: "Can I freeze or pause my membership?", a: "Yes, speak to our front desk or use the chat button to request a pause for medical or travel reasons." },
+  { q: "How can I pay for a plan or class?", a: "Pay online with UPI, card or net banking, or choose Pay at gym and settle at reception. Your booking is reserved either way, and the payment status shows on your profile." },
+  { q: "What happens if a class is full?", a: "Each class has a limited number of seats. Once it's full it will show \"Class Full\" until a seat opens up, for example if someone cancels." },
+  { q: "Is the diet plan personalized?", a: "The Weight Loss and Weight Gain plans on this site are general samples. Elite members get a plan personalized by our in-house nutrition trainer." },
+  { q: "Can I switch my membership plan later?", a: "Yes, go to My Profile > Membership > Change plan at any time; your new plan starts once confirmed." },
+];
+
+/* Change these to your real gym hours */
+const GYM_HOURS = "Mon to Sat: 5:00 AM - 10:00 PM<br>Sunday: 7:00 AM - 12:00 PM";
+
+/* Payment options customer ko kaunse dikhenge (upar ki settings ke hisaab se) */
+const PAY_METHODS = [];
+if (LIVE_RAZORPAY) {
+  PAY_METHODS.push(["razorpay", "Pay online", "UPI, Card, Net banking"]);
+} else {
+  // Demo mode: sirf dikhane ke liye, asli paisa nahi katta
+  PAY_METHODS.push(["upi", "UPI", "GPay, PhonePe, Paytm"], ["card", "Card", "Debit or credit"], ["netbanking", "Net banking", "Pick your bank"]);
+}
+if (GYM_UPI_ID.trim()) PAY_METHODS.push(["upiqr", "Scan & pay (UPI)", "Any UPI app"]);
+PAY_METHODS.push(["cash", "Pay at gym", "Pay at reception"]);
+
+const BANKS = ["State Bank of India", "HDFC Bank", "ICICI Bank", "Axis Bank", "Kotak Mahindra Bank", "Punjab National Bank", "Bank of Baroda"];
+
+/* ---------- storage helpers & Supabase synchronizers ---------- */
+let currentGymUser = null;
+let gymUsersCache = [];
+let gymMembershipRequests = [];
+let gymBookingsCache = JSON.parse(localStorage.getItem("gym_bookings") || "[]");
+let gymInquiriesCache = JSON.parse(localStorage.getItem("gym_inquiries") || "[]");
+let gymTrainerRequestsCache = JSON.parse(localStorage.getItem("gym_trainer_requests") || "[]");
+
+function getUsers() { return gymUsersCache; }
+function getCurrentUser() { return currentGymUser; }
+function setCurrentUser(user) { currentGymUser = user; }
+function isGymAdminUser(authUser) {
+  if (!authUser) return false;
+  const role = authUser.app_metadata && authUser.app_metadata.role;
+  return role === "gym_admin" || authUser.email === "sushmakamble103@gmail.com";
+}
+
+function getBookings() { return gymBookingsCache; }
+function saveBookings(b) { gymBookingsCache = b; localStorage.setItem("gym_bookings", JSON.stringify(b)); }
+function getPayments() { return JSON.parse(localStorage.getItem("gym_payments") || "[]"); }
+function savePayments(p) { localStorage.setItem("gym_payments", JSON.stringify(p)); }
+function getAttendance() { return JSON.parse(localStorage.getItem("gym_attendance") || "[]"); }
+function saveAttendance(a) { localStorage.setItem("gym_attendance", JSON.stringify(a)); }
+function getInquiries() { return gymInquiriesCache; }
+function saveInquiries(i) { gymInquiriesCache = i; localStorage.setItem("gym_inquiries", JSON.stringify(i)); }
+function getTrainerRequests() { return gymTrainerRequestsCache; }
+function saveTrainerRequests(list) { gymTrainerRequestsCache = list; localStorage.setItem("gym_trainer_requests", JSON.stringify(list)); }
+
+function gymMemberFromRow(row) {
+  return {
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    phone: row.phone || "",
+    joined: row.joining_date,
+    age: row.age || "",
+    weight: row.weight || "",
+    height: row.height || "",
+    goal: row.goal || "",
+    referredBy: row.referred_by || "",
+    membership: row.package ? {
+      plan: row.package,
+      start: row.membership_start,
+      end: row.membership_end
+    } : null
+  };
+}
+
+function gymBookingFromRow(r) {
+  return {
+    id: r.id,
+    classId: Number(r.class_id),
+    email: r.member_email,
+    memberName: r.member_name || "",
+    title: r.class_title,
+    time: r.class_time,
+    paymentId: r.payment_id,
+    bookedOn: r.booked_on,
+    memberId: r.member_id,
+    createdAt: r.created_at
+  };
+}
+
+function gymInquiryFromRow(r) {
+  return {
+    id: r.id,
+    name: r.customer_name,
+    phone: r.customer_phone || "",
+    email: r.customer_email || "",
+    message: r.message,
+    date: r.inquiry_date,
+    status: r.status,
+    reply: r.reply || "",
+    memberId: r.member_id
+  };
+}
+
+function gymTrainerReqFromRow(r) {
+  return {
+    id: r.id,
+    email: r.member_email,
+    trainer: r.trainer,
+    date: r.requested_date,
+    time: String(r.requested_time || "").slice(0, 5),
+    note: r.note || "",
+    status: r.status,
+    createdOn: r.created_on,
+    paymentId: r.payment_id,
+    memberId: r.member_id
+  };
+}
+
+async function refreshGymMembers() {
+  const client = window.gymSupabase;
+  const currentUser = getCurrentUser();
+  if (!client || !currentUser) {
+    gymUsersCache = [];
+    gymMembershipRequests = [];
+    return;
+  }
+
+  const membersQuery = client.from("gym_members").select("*").order("joining_date", { ascending: false });
+  const { data: members, error: membersError } = currentUser.isAdmin
+    ? await membersQuery
+    : await membersQuery.eq("id", currentUser.id);
+  if (membersError) throw membersError;
+  gymUsersCache = (members || []).map(gymMemberFromRow);
+  const currentMember = gymUsersCache.find(member => member.id === currentUser.id);
+  if (currentMember) {
+    setCurrentUser(Object.assign({}, currentUser, {
+      name: currentMember.name,
+      email: currentMember.email
+    }));
+  }
+
+  if (currentUser.isAdmin) {
+    const { data: requests, error: requestsError } = await client
+      .from("gym_membership_requests")
+      .select("id, member_id, package, requested_at")
+      .eq("status", "pending")
+      .order("requested_at", { ascending: true });
+    if (requestsError) throw requestsError;
+    gymMembershipRequests = requests || [];
+  } else {
+    gymMembershipRequests = [];
+  }
+}
+
+async function refreshGymClasses() {
+  const client = window.gymSupabase;
+  if (!client) return;
+  try {
+    const { data, error } = await client.from("gym_classes").select("*").order("id", { ascending: true });
+    if (error) throw error;
+    if (data && data.length > 0) {
+      classesData = data.map(gymClassFromRow);
+      saveClasses();
+      renderClasses();
+      renderClassFilters();
+    }
+  } catch (e) {
+    console.warn("Could not load gym classes from Supabase:", e);
+  }
+}
+
+async function refreshGymBookings() {
+  const client = window.gymSupabase;
+  const u = getCurrentUser();
+  if (!client || !u) {
+    gymBookingsCache = JSON.parse(localStorage.getItem("gym_bookings") || "[]");
+    return;
+  }
+  try {
+    const q = client.from("gym_bookings").select("*").order("created_at", { ascending: false });
+    const { data, error } = u.isAdmin ? await q : await q.eq("member_email", u.email);
+    if (error) throw error;
+    if (data) {
+      gymBookingsCache = data.map(gymBookingFromRow);
+      saveBookings(gymBookingsCache);
+    }
+  } catch (err) {
+    console.warn("Could not fetch bookings from Supabase, using local cache:", err);
+    gymBookingsCache = JSON.parse(localStorage.getItem("gym_bookings") || "[]");
+  }
+}
+
+async function refreshGymInquiries() {
+  const client = window.gymSupabase;
+  const u = getCurrentUser();
+  if (!client) return;
+  try {
+    const q = client.from("gym_inquiries").select("*").order("created_at", { ascending: false });
+    const { data, error } = (u && u.isAdmin) ? await q : (u ? await q.eq("customer_email", u.email) : { data: [], error: null });
+    if (error) throw error;
+    if (data) {
+      gymInquiriesCache = data.map(gymInquiryFromRow);
+      saveInquiries(gymInquiriesCache);
+    }
+  } catch (err) {
+    console.warn("Could not fetch inquiries from Supabase:", err);
+    gymInquiriesCache = JSON.parse(localStorage.getItem("gym_inquiries") || "[]");
+  }
+}
+
+async function refreshGymTrainerRequests() {
+  const client = window.gymSupabase;
+  const u = getCurrentUser();
+  if (!client || !u) return;
+  try {
+    const q = client.from("gym_trainer_requests").select("*").order("created_at", { ascending: false });
+    const { data, error } = u.isAdmin ? await q : await q.eq("member_email", u.email);
+    if (error) throw error;
+    if (data) {
+      gymTrainerRequestsCache = data.map(gymTrainerReqFromRow);
+      saveTrainerRequests(gymTrainerRequestsCache);
+    }
+  } catch (err) {
+    console.warn("Could not fetch trainer requests from Supabase:", err);
+    gymTrainerRequestsCache = JSON.parse(localStorage.getItem("gym_trainer_requests") || "[]");
+  }
+}
+
+async function refreshAllGymData() {
+  await refreshGymMembers();
+  await Promise.allSettled([
+    refreshGymClasses(),
+    refreshGymBookings(),
+    refreshGymInquiries(),
+    refreshGymTrainerRequests()
+  ]);
+}
+
+window.initializeGymSupabase = async function () {
+  try {
+    const { data, error } = await window.gymSupabase.auth.getSession();
+    if (error) throw error;
+    const authUser = data.session && data.session.user;
+    if (authUser) {
+      setCurrentUser({
+        id: authUser.id,
+        name: authUser.user_metadata.full_name || authUser.email,
+        email: authUser.email,
+        isAdmin: isGymAdminUser(authUser)
+      });
+    }
+    await refreshAllGymData();
+    updateNavbar();
+    navigate(getCurrentUser() && getCurrentUser().isAdmin ? "admin" : "home");
+  } catch (error) {
+    console.error("Supabase initialization failed:", error);
+    updateNavbar();
+    navigate("home");
+  }
+};
+
+function getFullUser() {
+  const cu = getCurrentUser();
+  return cu ? getUsers().find(u => u.id === cu.id) : null;
+}
+async function updateUser(email, patch) {
+  const client = window.gymSupabase;
+  const member = getUsers().find(u => u.email === email);
+  if (!member) throw new Error("Gym member was not found. Refresh the page and try again.");
+
+  const profileFields = ["name", "phone", "age", "weight", "height", "goal"];
+  if (profileFields.some(field => Object.prototype.hasOwnProperty.call(patch, field))) {
+    const values = profileFields.map(field => patch[field] ?? member[field] ?? "");
+    const { error } = await client.rpc("set_gym_member_profile", {
+      target_name: values[0],
+      target_phone: values[1],
+      target_age: values[2],
+      target_weight: values[3],
+      target_height: values[4],
+      target_goal: values[5]
+    });
+    if (error) throw error;
+  }
+  if (Object.prototype.hasOwnProperty.call(patch, "membership")) {
+    if (!getCurrentUser()?.isAdmin) {
+      throw new Error("Membership changes must be approved by gym staff.");
+    }
+    const membership = patch.membership;
+    const { error } = await client.rpc("admin_set_gym_package", {
+      target_member_id: member.id,
+      target_package: membership ? membership.plan : null
+    });
+    if (error) throw error;
+  }
+  await refreshGymMembers();
+}
+function isAdmin() {
+  const u = getCurrentUser();
+  return !!(u && u.isAdmin === true);
+}
+
+/* ---------- small utils ---------- */
+const pad = n => String(n).padStart(2, "0");
+function ymd(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+function todayStr() { return ymd(new Date()); }
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+function fmtDate(s) {
+  if (!s) return "-";
+  const d = new Date(s + "T00:00:00");
+  return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+}
+function inr(n) { return "Rs " + Number(n || 0).toLocaleString("en-IN"); }
+function hasActiveMembership() {
+  const u = getFullUser();
+  return !!(u && u.membership && u.membership.end >= todayStr());
+}
+function classIsFree() {
+  const u = getFullUser();
+  return hasActiveMembership() && ["Pro", "Elite"].includes(u.membership.plan);
+}
+function trainerFee() {
+  const u = getFullUser();
+  return hasActiveMembership() && u.membership.plan === "Elite" ? 0 : TRAINER_SESSION_FEE;
+}
+const isPaid = s => s === "Paid" || s === "Confirmed";
+function badgeFor(s) {
+  if (["Paid", "Confirmed", "Included in plan", "Resolved"].includes(s)) return "good";
+  if (["Pending", "Open", "Refund pending", "Membership approval pending"].includes(s)) return "warn";
+  return "mute";
+}
+function statusBadge(s) { return `<span class="badge ${badgeFor(s)}">${esc(s)}</span>`; }
+
+/* ---------- navigation ---------- */
+async function navigate(page) {
+  const user = getCurrentUser();
+  if (page === "dashboard") page = "profile";
+  if (page === "profile" && user && user.isAdmin) page = "admin";
+  if (page === "profile" && !user) { page = "login"; }
+  if (page === "admin" && !isAdmin()) { page = "login"; }
+  if (page === "admin") {
+    try {
+      await refreshGymMembers();
+    } catch (error) {
+      console.error("Could not load gym members:", error);
+      window.alert("Could not load members from Supabase. Check the database setup and try again.");
+      page = "home";
+    }
+  }
+  document.querySelectorAll("section[data-page]").forEach(s => s.classList.remove("active"));
+  document.querySelector(`section[data-page="${page}"]`).classList.add("active");
+  document.querySelectorAll(".nav-links a").forEach(a => a.classList.remove("active"));
+  window.scrollTo(0, 0);
+  document.getElementById("navLinks").classList.remove("open");
+  if (page === "classes") renderClasses();
+  if (page === "trainers") renderTrainers();
+  if (page === "profile") renderProfile();
+  if (page === "admin") renderAdmin();
+  if (page === "diet") renderDiet();
+  if (page === "home") { renderTestimonials(); renderFaq(); }
+}
+
+function updateNavbar() {
+  const user = getCurrentUser();
+  const authLinks = document.getElementById("authLinks");
+  const fab = document.getElementById("chatFab");
+  if (user && user.isAdmin) {
+    authLinks.innerHTML = `<a onclick="navigate('admin')">Admin Dashboard</a> <a onclick="logoutUser()" style="background:#ff4c29;color:white;padding:9px 20px;border-radius:5px;">Logout</a>`;
+    fab.style.display = "none";
+    document.getElementById("chatPanel").classList.remove("open");
+  } else if (user) {
+    authLinks.innerHTML = `<a onclick="navigate('profile')">My Profile</a> <a onclick="logoutUser()" style="background:#ff4c29;color:white;padding:9px 20px;border-radius:5px;">Logout</a>`;
+    fab.style.display = "";
+  } else {
+    authLinks.innerHTML = `<a onclick="navigate('login')">Login</a> <a onclick="navigate('register')" style="background:#ff4c29;color:white;padding:9px 20px;border-radius:5px;">Join Now</a>`;
+    fab.style.display = "";
+  }
+}
+
+/* ---------- auth ---------- */
+async function registerUser() {
+  const submitButton = document.getElementById("registerSubmitBtn");
+  if (submitButton.disabled) return;
+  const name = document.getElementById("registerName").value.trim();
+  const email = document.getElementById("registerEmail").value.trim();
+  const phone = document.getElementById("registerPhone").value.trim();
+  const password = document.getElementById("registerPassword").value;
+  const msg = document.getElementById("registerMsg");
+  if (!name || !email || !phone || !password) { msg.innerHTML = `<p class="error-msg">Please fill all fields</p>`; return; }
+  if (password.length < 6) { msg.innerHTML = `<p class="error-msg">Password must be at least 6 characters.</p>`; return; }
+  // Basic email check
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { msg.innerHTML = `<p class="error-msg">Please enter a valid email address.</p>`; return; }
+  const referredBy = document.getElementById("registerReferral").value.trim().toUpperCase() || null;
+  submitButton.disabled = true;
+  submitButton.textContent = "Creating account...";
+  try {
+    const { data, error } = await window.gymSupabase.auth.signUp({
+      email,
+      password,
+      options: { data: { full_name: name, phone: phone, referred_by: referredBy } }
+    });
+    if (error) throw error;
+    if (!data.session) {
+      // Email confirmation required
+      msg.innerHTML = `<p class="success-msg">✅ Account created! Check your email (<b>${esc(email)}</b>) for a confirmation link, then log in.</p>`;
+      return;
+    }
+    setCurrentUser({
+      id: data.user.id,
+      name,
+      email: data.user.email,
+      isAdmin: isGymAdminUser(data.user)
+    });
+    await refreshAllGymData();
+    msg.innerHTML = "";
+    updateNavbar();
+    await navigate("home");
+    openDietModal("Welcome to PowerFit!", "Your account is ready. Choose a diet plan that matches your goal, then complete your details on your profile.");
+  } catch (error) {
+    console.error("Gym account registration failed:", error);
+    const errorMessage = String(error.message || "");
+    const status = error.status || (error.__isAuthError ? error.status : null);
+    if (/rate.?limit|too many requests|email rate/i.test(errorMessage)) {
+      msg.innerHTML = `<p class="error-msg">Too many signup attempts. Please wait a few minutes and try again.</p>`;
+    } else if (status === 422 || /unprocessable|invalid.*email|email.*invalid|already registered|User already registered/i.test(errorMessage)) {
+      msg.innerHTML = `<p class="error-msg">This email is already registered or invalid. Please <a href="#" onclick="navigate('login');return false;">log in</a> instead, or use a different email.</p>`;
+    } else if (/password/i.test(errorMessage)) {
+      msg.innerHTML = `<p class="error-msg">Password issue: ${esc(errorMessage)}</p>`;
+    } else {
+      msg.innerHTML = `<p class="error-msg">${esc(errorMessage || "Could not create your account. Please try again.")}</p>`;
+    }
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = "Create Account";
+  }
+}
+
+async function loginUser() {
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+  const msg = document.getElementById("loginMsg");
+  try {
+    const { data, error } = await window.gymSupabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    setCurrentUser({
+      id: data.user.id,
+      name: data.user.user_metadata.full_name || data.user.email,
+      email: data.user.email,
+      isAdmin: isGymAdminUser(data.user)
+    });
+    await refreshAllGymData();
+    msg.innerHTML = "";
+    document.getElementById("loginPassword").value = "";
+    updateNavbar();
+    await navigate(isAdmin() ? "admin" : "home");
+  } catch (error) {
+    console.error("Gym login failed:", error);
+    msg.innerHTML = `<p class="error-msg">${esc(error.message || "Invalid email or password.")}</p>`;
+  }
+}
+
+async function logoutUser() {
+  const { error } = await window.gymSupabase.auth.signOut();
+  if (error) {
+    console.error("Gym logout failed:", error);
+    window.alert("Could not log out. Please try again.");
+    return;
+  }
+  setCurrentUser(null);
+  gymUsersCache = [];
+  gymMembershipRequests = [];
+  gymBookingsCache = [];
+  gymInquiriesCache = [];
+  gymTrainerRequestsCache = [];
+  localStorage.removeItem("gym_bookings");
+  localStorage.removeItem("gym_inquiries");
+  localStorage.removeItem("gym_trainer_requests");
+  updateNavbar();
+  await navigate("home");
+}
+
+/* ---------- classes / trainers ---------- */
+let classSearchQuery = "";
+let classCategoryFilter = "All";
+
+function classCategories() {
+  return ["All", ...new Set(classesData.map(c => c.category))];
+}
+
+function renderClassFilters() {
+  const wrap = document.getElementById("classFilters");
+  if (!wrap) return;
+  if (!classCategories().includes(classCategoryFilter)) classCategoryFilter = "All";
+  wrap.innerHTML = classCategories().map(cat =>
+    `<button class="${cat === classCategoryFilter ? "active" : ""}" data-c="${esc(cat)}" onclick="setClassFilter(this.dataset.c)">${esc(cat)}</button>`
+  ).join("");
+}
+
+function setClassFilter(cat) {
+  classCategoryFilter = cat;
+  renderClassFilters();
+  renderClasses();
+}
+
+function onClassSearch() {
+  classSearchQuery = document.getElementById("classSearchInput").value.trim().toLowerCase();
+  renderClasses();
+}
+
+// Every class is open to any number of different customers. Bookings are
+// tracked per customer (by their own email/classId pair), so many different
+// customers can each grab their own seat on the same class, any time.
+function classSeatsTaken(classId) {
+  return getBookings().filter(b => b.classId === classId).length;
+}
+
+function renderClasses() {
+  const grid = document.getElementById("classesGrid");
+  const user = getCurrentUser();
+  const bookings = getBookings();
+  const free = user && classIsFree();
+  renderClassFilters();
+
+  const list = classesData.filter(c => {
+    const matchesCat = classCategoryFilter === "All" || c.category === classCategoryFilter;
+    const matchesSearch = !classSearchQuery ||
+      c.title.toLowerCase().includes(classSearchQuery) ||
+      c.category.toLowerCase().includes(classSearchQuery) ||
+      c.desc.toLowerCase().includes(classSearchQuery);
+    return matchesCat && matchesSearch;
+  });
+
+  if (list.length === 0) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">No classes match your search. Try a different keyword or filter.</div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map(c => {
+    const alreadyBooked = user && bookings.find(b => b.classId === c.id && b.email === user.email);
+    const taken = classSeatsTaken(c.id);
+    let btnLabel = "Book Class";
+    let btnDisabled = false;
+    if (alreadyBooked) { btnLabel = "Booked (your seat)"; btnDisabled = true; }
+    if (user && user.isAdmin) { btnLabel = "Member login required"; btnDisabled = true; }
+    return `
+    <div class="card">
+      <img src="${esc(c.img)}" alt="${esc(c.title)}" />
+      <div class="card-body">
+        <h3>${esc(c.title)}</h3>
+        <p>${esc(c.desc)}<br><strong>${esc(c.time)}</strong></p>
+        <div class="card-price">${free ? "Included in membership \u2014 no extra charge" : "Rs " + esc(c.price) + " / month"}</div>
+        <div class="seats-wrap">
+          <div class="seats-text">${taken > 0 ? taken + " member" + (taken === 1 ? "" : "s") + " already booked \u2014 always open for more" : "Open for booking \u2014 no seat limit"}</div>
+        </div>
+        <button class="btn-primary btn-small" onclick="bookClass(${c.id})" ${btnDisabled ? "disabled" : ""}>
+          ${btnLabel}
+        </button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function renderTrainers() {
+  const grid = document.getElementById("trainersGrid");
+  grid.innerHTML = trainersData.map((t, i) => `
+    <div class="card">
+      <img src="${t.img}" alt="${t.name}" />
+      <div class="card-body">
+        <h3>${t.name}</h3><p>${t.role}</p>
+        <button class="btn-outline btn-small trainer-req-btn" onclick="openTrainerRequest(${i})">Request 1-on-1 session</button>
+      </div>
+    </div>`).join("");
+}
+
+/* =====================================================================
+   PAYMENTS
+   Used by: membership plans, class bookings, trainer 1-on-1 sessions.
+
+   Payment options (upar "PAYMENT SETTINGS" se control hote hain):
+   1) Pay online  = Razorpay Checkout (UPI, card, net banking, wallets). ASLI PAISA.
+                    Sirf RAZORPAY_KEY_ID daalne par chalta hai.
+   2) Scan & pay  = Seedha gym ke UPI ID par QR / UPI app se payment. Customer UTR
+                    daalta hai, status "Pending" rehta hai, admin bank mein check
+                    karke "Mark received" dabata hai.
+   3) Pay at gym  = cash, status "Pending" jab tak admin "Mark received" na kare.
+   4) Demo mode   = RAZORPAY_KEY_ID khali ho to purane simulated UPI/Card/Net banking
+                    (koi asli paisa nahi katta).
+
+   IMPORTANT: ye ek single-file website hai (koi server nahi). Razorpay ka success
+   browser mein confirm hota hai, isliye admin ko Payments tab mein dikhne wali
+   payment ID (pay_...) Razorpay dashboard se match karni chahiye. Pakka verification
+   ke liye server chahiye (backend + signature verify).
+   ===================================================================== */
+let pending = null;      // what the customer is paying for
+let payMethod = PAY_METHODS[0][0];
+let payBusy = false;
+
+function bookClass(classId) {
+  const user = getCurrentUser();
+  if (!user) { navigate("login"); return; }
+  if (user.isAdmin) return;
+  if (getBookings().find(b => b.classId === classId && b.email === user.email)) return;
+  const cls = classesData.find(c => c.id === classId);
+  if (!cls) return;
+  // No seat limit: any class can be booked by any number of different customers, any time.
+  openPayment({ kind: "class", refId: classId, title: cls.title + " (class booking)", amount: classIsFree() ? 0 : Number(cls.price) });
+}
+
+function choosePlan(planName) {
+  const user = getCurrentUser();
+  if (!user) { navigate("register"); return; }
+  if (user.isAdmin) return;
+  openPayment({ kind: "plan", refId: planName, title: planName + " membership (30 days)", amount: planPrices[planName] });
+}
+
+function openPayment(item) {
+  pending = item;
+  payBusy = false;
+  payMethod = PAY_METHODS[0][0];
+  const free = item.amount === 0;
+  document.getElementById("payStepForm").style.display = "block";
+  document.getElementById("payStepDone").style.display = "none";
+  document.getElementById("confirmHeading").textContent = free
+    ? (item.kind === "trainer" ? "Confirm session request" : "Confirm booking")
+    : "Complete payment";
+  document.getElementById("paySumTitle").textContent = item.title;
+  document.getElementById("paySumAmount").textContent = free ? "Included" : inr(item.amount);
+  document.getElementById("payMethods").style.display = free ? "none" : "grid";
+  document.getElementById("payError").textContent = "";
+  renderPayMethods();
+  renderPayFields();
+  updatePayBtn();
+  updatePayNote();
+  document.getElementById("payOverlay").classList.add("open");
+}
+
+function closePayment() {
+  document.getElementById("payOverlay").classList.remove("open");
+  pending = null;
+  payBusy = false;
+}
+
+function renderPayMethods() {
+  document.getElementById("payMethods").innerHTML = PAY_METHODS.map(m =>
+    `<button type="button" class="pay-method ${m[0] === payMethod ? "active" : ""}" onclick="selectPayMethod('${m[0]}')">${m[1]}<small>${m[2]}</small></button>`
+  ).join("");
+}
+
+function selectPayMethod(m) {
+  if (payBusy) return;
+  payMethod = m;
+  document.getElementById("payError").textContent = "";
+  renderPayMethods();
+  renderPayFields();
+  updatePayBtn();
+  updatePayNote();
+}
+
+// UPI deep link (QR code aur "Open UPI app" button dono isi se bante hain)
+function upiLink(item) {
+  return "upi://pay?pa=" + GYM_UPI_ID.trim() + "&pn=" + encodeURIComponent(GYM_UPI_NAME) +
+    "&am=" + Number(item.amount).toFixed(2) + "&cu=INR&tn=" + encodeURIComponent("PowerFit " + item.kind);
+}
+
+function renderPayFields() {
+  const f = document.getElementById("payFields");
+  if (!pending) return;
+  if (pending.amount === 0) {
+    f.innerHTML = `<p class="hint">${pending.kind === "trainer"
+      ? "No fee \u2014 1-on-1 sessions are included in your Elite plan."
+      : "No extra charge \u2014 this class is included in your current membership plan."}</p>`;
+    return;
+  }
+  if (payMethod === "razorpay") {
+    f.innerHTML = `<p class="hint">Click <b>Pay</b> to open the secure Razorpay window. You can pay with UPI, debit/credit card, net banking or wallets there.</p>`;
+  } else if (payMethod === "upiqr") {
+    const link = upiLink(pending);
+    f.innerHTML = `
+      <div class="upi-box">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=0&data=${encodeURIComponent(link)}" alt="UPI QR code" width="200" height="200" onerror="this.style.display='none'" />
+        <p class="hint">Scan with any UPI app, or pay to <b>${esc(GYM_UPI_ID.trim())}</b><br>Amount: <b>${inr(pending.amount)}</b></p>
+        <a class="btn-outline btn-small" href="${esc(link)}">Open UPI app (on mobile)</a>
+      </div>
+      <label for="payUtr">UTR / UPI transaction ID (shown in your app after paying)</label>
+      <input id="payUtr" placeholder="e.g. 412345678901" autocomplete="off" />
+      <p class="hint">After paying exactly ${inr(pending.amount)}, enter the transaction ID above and submit. Our team confirms it against the bank record.</p>`;
+  } else if (payMethod === "upi") {
+    f.innerHTML = `<label for="payUpi">UPI ID</label>
+      <input id="payUpi" placeholder="name@bank" autocomplete="off" />
+      <p class="hint">For example rahul@okhdfcbank. You will approve the request in your UPI app.</p>`;
+  } else if (payMethod === "card") {
+    f.innerHTML = `<label for="payCardName">Name on card</label>
+      <input id="payCardName" autocomplete="off" />
+      <label for="payCardNum">Card number</label>
+      <input id="payCardNum" inputmode="numeric" placeholder="1234 5678 9012 3456" maxlength="23" autocomplete="off" oninput="formatCardInput(this)" />
+      <div class="row2">
+        <div><label for="payCardExp">Expiry (MM/YY)</label><input id="payCardExp" inputmode="numeric" placeholder="MM/YY" maxlength="5" autocomplete="off" oninput="formatExpiryInput(this)" /></div>
+        <div><label for="payCardCvv">CVV</label><input id="payCardCvv" type="password" inputmode="numeric" placeholder="123" maxlength="4" autocomplete="off" /></div>
+      </div>`;
+  } else if (payMethod === "netbanking") {
+    f.innerHTML = `<label for="payBank">Select your bank</label>
+      <select id="payBank"><option value="">Choose bank</option>${BANKS.map(b => `<option>${b}</option>`).join("")}</select>
+      <p class="hint">You will be redirected to your bank to finish the payment.</p>`;
+  } else {
+    f.innerHTML = `<p class="hint">Your booking is reserved now. Pay ${inr(pending.amount)} in cash or UPI at the gym reception. It shows as Pending on your profile until our team marks it received.</p>`;
+  }
+}
+
+function updatePayBtn() {
+  if (!pending) return;
+  const btn = document.getElementById("payBtn");
+  btn.disabled = false;
+  if (pending.amount === 0) btn.textContent = pending.kind === "trainer" ? "Confirm request" : "Confirm booking";
+  else if (payMethod === "cash") btn.textContent = "Reserve now, pay " + inr(pending.amount) + " at gym";
+  else if (payMethod === "upiqr") btn.textContent = "I have paid " + inr(pending.amount) + ", submit";
+  else btn.textContent = "Pay " + inr(pending.amount);
+}
+
+// Neeche ka chhota note (mode ke hisaab se badalta hai)
+function updatePayNote() {
+  const el = document.getElementById("payDemo");
+  if (!pending || pending.amount === 0) { el.style.display = "none"; return; }
+  let t;
+  if (payMethod === "razorpay") {
+    t = RZP_TEST_MODE
+      ? "Test mode: no real money is charged. Use Razorpay test payment details."
+      : "Secure payment by Razorpay. Your card, UPI and bank details are never stored on this site.";
+  } else if (payMethod === "upiqr") {
+    t = "Your payment is marked Paid after our team verifies the transaction ID.";
+  } else if (payMethod === "cash") {
+    t = "";
+  } else {
+    t = "Demo mode: no real money is charged and card details are never saved.";
+  }
+  el.textContent = t;
+  el.style.display = t ? "block" : "none";
+}
+
+function formatCardInput(el) {
+  const d = el.value.replace(/\D/g, "").slice(0, 19);
+  el.value = d.replace(/(.{4})/g, "$1 ").trim();
+}
+function formatExpiryInput(el) {
+  let d = el.value.replace(/\D/g, "").slice(0, 4);
+  if (d.length > 2) d = d.slice(0, 2) + "/" + d.slice(2);
+  el.value = d;
+}
+function luhnOk(num) {
+  let sum = 0, alt = false;
+  for (let i = num.length - 1; i >= 0; i--) {
+    let n = Number(num[i]);
+    if (alt) { n *= 2; if (n > 9) n -= 9; }
+    sum += n; alt = !alt;
+  }
+  return sum % 10 === 0;
+}
+function fieldVal(id) { const el = document.getElementById(id); return el ? el.value : ""; }
+
+function validatePayMethod() {
+  if (payMethod === "upi") {
+    const v = fieldVal("payUpi").trim();
+    if (!/^[a-zA-Z0-9._-]{2,}@[a-zA-Z]{2,}$/.test(v)) return { error: "Enter a valid UPI ID, like name@bank." };
+    return { method: "UPI", detail: v };
+  }
+  if (payMethod === "card") {
+    const name = fieldVal("payCardName").trim();
+    const digits = fieldVal("payCardNum").replace(/\s/g, "");
+    const exp = fieldVal("payCardExp");
+    const cvv = fieldVal("payCardCvv");
+    if (!name) return { error: "Enter the name on the card." };
+    if (!/^\d{13,19}$/.test(digits) || !luhnOk(digits)) return { error: "Card number is not valid. Check the digits and try again." };
+    const m = exp.match(/^(0[1-9]|1[0-2])\/(\d{2})$/);
+    if (!m) return { error: "Enter the expiry as MM/YY." };
+    if (new Date(2000 + Number(m[2]), Number(m[1]), 1) <= new Date()) return { error: "This card has expired." };
+    if (!/^\d{3,4}$/.test(cvv)) return { error: "Enter the 3 or 4 digit CVV." };
+    return { method: "Card", detail: "Card ending " + digits.slice(-4) };
+  }
+  if (payMethod === "netbanking") {
+    const bank = fieldVal("payBank");
+    if (!bank) return { error: "Select your bank to continue." };
+    return { method: "Net banking", detail: bank };
+  }
+  return { method: "Pay at gym", detail: "Pay at reception" };
+}
+
+/* ---- Razorpay Checkout (asli online payment) ---- */
+function loadRazorpay() {
+  return new Promise((resolve, reject) => {
+    if (window.Razorpay) { resolve(); return; }
+    const s = document.createElement("script");
+    s.src = "https://checkout.razorpay.com/v1/checkout.js";
+    s.onload = () => resolve();
+    s.onerror = () => reject(new Error("Could not load Razorpay"));
+    document.head.appendChild(s);
+  });
+}
+
+async function startRazorpay() {
+  const item = pending;
+  const btn = document.getElementById("payBtn");
+  const err = document.getElementById("payError");
+  err.textContent = "";
+  payBusy = true;
+  btn.disabled = true;
+  btn.textContent = "Opening secure payment...";
+  const reset = msg => { payBusy = false; if (msg) err.textContent = msg; updatePayBtn(); };
+
+  try { await loadRazorpay(); }
+  catch (e) { reset("Could not load the payment window. Check your internet connection and try again."); return; }
+
+  const u = getFullUser() || {};
+  const rz = new Razorpay({
+    key: RAZORPAY_KEY_ID.trim(),
+    amount: Math.round(Number(item.amount) * 100),   // paise mein
+    currency: "INR",
+    name: GYM_NAME,
+    description: item.title,
+    prefill: { name: u.name || "", email: u.email || "", contact: u.phone || "" },
+    notes: { kind: item.kind, ref: String(item.refId || ""), member: u.email || "" },
+    theme: { color: "#ff4c29" },
+    modal: { ondismiss: () => reset() },
+    handler: function (resp) {
+      if (!pending) pending = item;
+      payBusy = false;
+      const id = resp && resp.razorpay_payment_id;
+      if (!id) { reset("Payment could not be confirmed. Please contact the gym."); return; }
+      if (getPayments().some(p => p.detail === id)) { reset("This payment was already recorded."); return; }
+      completePaymentSafely({ method: "Razorpay", detail: id, status: "Paid" });
+    }
+  });
+  rz.on("payment.failed", r => reset((r && r.error && r.error.description) || "Payment failed. Please try again."));
+  rz.open();
+}
+
+function submitPayment() {
+  if (!pending || payBusy) return;
+  const err = document.getElementById("payError");
+  err.textContent = "";
+
+  if (pending.amount === 0) {
+    completePaymentSafely({ method: "Included", detail: "", status: "Included in plan" });
+    return;
+  }
+
+  // Asli online payment (Razorpay)
+  if (payMethod === "razorpay") { startRazorpay(); return; }
+
+  // Seedha UPI (QR scan) - admin verify karega
+  if (payMethod === "upiqr") {
+    const utr = fieldVal("payUtr").trim().toUpperCase();
+    if (!/^[A-Z0-9]{8,22}$/.test(utr)) { err.textContent = "Enter the UTR / transaction ID from your UPI app (8 to 22 letters or digits)."; return; }
+    if (getPayments().some(p => p.method === UPI_SCAN_LABEL && p.detail === "UTR " + utr)) { err.textContent = "This transaction ID was already used."; return; }
+    completePaymentSafely({ method: UPI_SCAN_LABEL, detail: "UTR " + utr, status: "Pending" });
+    return;
+  }
+
+  const r = validatePayMethod();
+  if (r.error) { err.textContent = r.error; return; }
+  if (payMethod === "cash") {
+    completePaymentSafely({ method: r.method, detail: r.detail, status: "Pending" });
+    return;
+  }
+  // Demo mode: simulated online payment
+  const btn = document.getElementById("payBtn");
+  payBusy = true;
+  btn.disabled = true;
+  btn.textContent = "Processing payment...";
+  setTimeout(() => {
+    if (!pending) return;
+    payBusy = false;
+    completePaymentSafely({ method: r.method, detail: r.detail, status: "Paid" });
+  }, 1400);
+}
+
+async function completePaymentSafely(info) {
+  try {
+    await completePayment(info);
+  } catch (error) {
+    console.error("Could not save gym transaction:", error);
+    payBusy = false;
+    const errorElement = document.getElementById("payError");
+    if (errorElement) errorElement.textContent = error.message || "Could not save this transaction. Please try again.";
+    updatePayBtn();
+  }
+}
+
+async function completePayment(info) {
+  const user = getCurrentUser();
+  const today = todayStr();
+  // membership_request insert is handled AFTER payment object is created below
+  const payment = {
+    id: "PF" + Date.now().toString().slice(-8),
+    email: user.email, title: pending.title, amount: pending.amount,
+    method: info.method, detail: info.detail,
+    status: pending.kind === "plan" ? "Membership approval pending" : info.status,
+    kind: pending.kind, date: today
+  };
+  const pays = getPayments(); pays.push(payment); savePayments(pays);
+
+  if (pending.kind === "class") {
+    const cls = classesData.find(c => c.id === pending.refId);
+    const bookingId = "BK-" + Date.now().toString().slice(-8);
+    const newBooking = {
+      id: bookingId,
+      classId: cls.id,
+      email: user.email,
+      title: cls.title,
+      time: cls.time,
+      paymentId: payment.id,
+      bookedOn: today,
+      memberId: user.id || null
+    };
+
+    if (window.gymSupabase) {
+      const { error: bkError } = await window.gymSupabase.from("gym_bookings").insert({
+        member_email: user.email,
+        class_id: cls.id,
+        class_title: cls.title,
+        class_time: cls.time,
+        payment_id: payment.id,
+        booked_on: today
+      });
+      if (bkError) {
+        console.error("Supabase booking insert error:", bkError);
+        throw new Error("Could not save booking in database: " + (bkError.message || ""));
+      }
+    }
+    const bookings = getBookings();
+    bookings.unshift(newBooking);
+    saveBookings(bookings);
+  } else if (pending.kind === "plan") {
+    payment.membershipRequestPending = true;
+    if (window.gymSupabase) {
+      const { error: mrError } = await window.gymSupabase.from("gym_membership_requests").insert({
+        member_id: user.id,
+        package: pending.refId
+      });
+      if (mrError) console.error("Supabase membership request insert error:", mrError);
+    }
+  } else if (pending.kind === "trainer") {
+    const d = pending.draft;
+    const trId = "TR" + Date.now().toString().slice(-6);
+    const trItem = {
+      id: trId,
+      email: user.email,
+      trainer: d.trainer,
+      date: d.date,
+      time: d.time,
+      note: d.note,
+      status: "Pending",
+      createdOn: today,
+      paymentId: payment.id,
+      memberId: user.id || null
+    };
+
+    if (window.gymSupabase) {
+      const { error: trError } = await window.gymSupabase.from("gym_trainer_requests").insert({
+        member_email: user.email,
+        trainer: d.trainer,
+        requested_date: d.date,
+        requested_time: (d.time && d.time.length === 5) ? d.time + ":00" : (d.time || "10:00:00"),
+        note: d.note || "Personal training session request",
+        status: "Pending",
+        created_on: today,
+        payment_id: payment.id
+      });
+      if (trError) {
+        console.error("Supabase trainer request insert error:", trError);
+        throw new Error("Could not save trainer request in database: " + (trError.message || ""));
+      }
+    }
+    const list = getTrainerRequests();
+    list.unshift(trItem);
+    saveTrainerRequests(list);
+  }
+
+  const doneTitles = { class: "Booking confirmed", plan: "Membership request sent", trainer: "Session requested" };
+  document.getElementById("doneTitle").textContent = doneTitles[pending.kind];
+  document.getElementById("doneReceipt").innerHTML = `
+    <div><span>Reference no.</span><span>${payment.id}</span></div>
+    <div><span>Item</span><span>${esc(payment.title)}</span></div>
+    <div><span>Amount</span><span>${payment.amount > 0 ? inr(payment.amount) : "Included"}</span></div>
+    <div><span>Method</span><span>${esc(payment.method)}${payment.detail && payment.method !== "Included" ? "<br><small style='color:#888'>" + esc(payment.detail) + "</small>" : ""}</span></div>
+    <div><span>Status</span><span>${esc(payment.status)}</span></div>
+    <div><span>Date</span><span>${fmtDate(today)}</span></div>`;
+  let note = "";
+  if (payment.status === "Pending") {
+    note = payment.method === UPI_SCAN_LABEL
+      ? "Thanks! Our team will verify your UPI payment (transaction ID) and confirm it shortly. Quote your reference number if you contact us."
+      : "Please pay " + inr(payment.amount) + " at the gym reception and quote your reference number.";
+  } else if (payment.membershipRequestPending) {
+    note = "Your membership request is saved. Gym staff will activate your package after confirming payment.";
+  }
+  document.getElementById("doneNote").textContent = note;
+  document.getElementById("payStepForm").style.display = "none";
+  document.getElementById("payStepDone").style.display = "block";
+  renderClasses();
+}
+
+function goToProfileFromPayment() { closePayment(); navigate("profile"); }
+function goToDietFromPayment() { closePayment(); navigate("diet"); }
+
+/* ---------- attendance ---------- */
+function markAttendance(type, ref, label) {
+  const u = getCurrentUser();
+  if (!u) return;
+  const d = todayStr();
+  const list = getAttendance();
+  if (list.find(a => a.email === u.email && a.date === d && a.ref === ref)) return;
+  list.push({ email: u.email, date: d, type: type, ref: ref, label: label });
+  saveAttendance(list);
+  renderProfile();
+}
+function gymCheckIn() { markAttendance("Gym", "gym", "Gym visit"); }
+function markClassAttendance(classId) {
+  const u = getCurrentUser();
+  const cls = classesData.find(c => c.id === classId);
+  const b = u && getBookings().find(x => x.classId === classId && x.email === u.email);
+  markAttendance("Class", "class-" + classId, cls ? cls.title : (b ? b.title : "Class"));
+}
+
+function renderCalendar(attList) {
+  const now = new Date();
+  const y = now.getFullYear(), m = now.getMonth();
+  const firstDow = new Date(y, m, 1).getDay();
+  const days = new Date(y, m + 1, 0).getDate();
+  const prefix = y + "-" + pad(m + 1);
+  const present = new Set(attList.filter(a => a.date.startsWith(prefix)).map(a => Number(a.date.slice(8))));
+  let h = ["S", "M", "T", "W", "T", "F", "S"].map(d => `<div class="cal-head">${d}</div>`).join("");
+  for (let i = 0; i < firstDow; i++) h += "<div></div>";
+  for (let d = 1; d <= days; d++) {
+    let cls = "cal-day";
+    if (present.has(d)) cls += " present";
+    if (d === now.getDate()) cls += " today";
+    if (d > now.getDate()) cls += " future";
+    h += `<div class="${cls}">${d}</div>`;
+  }
+  return `<div class="cal-title">${now.toLocaleString("en-IN", { month: "long", year: "numeric" })}</div><div class="calendar">${h}</div>`;
+}
+
+/* ---------- profile ---------- */
+function renderProfile() {
+  const cu = getCurrentUser();
+  const root = document.getElementById("profileRoot");
+  if (!cu || cu.isAdmin) return;
+  const u = getFullUser() || cu;
+  const today = todayStr();
+  const mem = u.membership;
+  const memActive = mem && mem.end >= today;
+  const allPays = getPayments();
+  const bookings = getBookings().filter(b => b.email === cu.email);
+  const pays = allPays.filter(p => p.email === cu.email).slice().reverse();
+  const att = getAttendance().filter(a => a.email === cu.email);
+  const inqs = getInquiries().filter(i => i.email === cu.email).slice().reverse();
+  const trainerReqs = getTrainerRequests().filter(r => r.email === cu.email).slice().reverse();
+  const referralCode = getReferralCode(u);
+  const referralUses = countReferralUses(referralCode);
+  const now = new Date();
+  const monthPrefix = today.slice(0, 7);
+  const monthDays = new Set(att.filter(a => a.date.startsWith(monthPrefix)).map(a => a.date));
+  const pct = Math.round(monthDays.size / now.getDate() * 100);
+  const classCount = att.filter(a => a.type === "Class").length;
+  const gymDoneToday = att.some(a => a.date === today && a.ref === "gym");
+  const initials = (u.name || "?").split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase();
+  const dueTotal = pays.filter(p => p.status === "Pending" && p.method === "Pay at gym").reduce((s, p) => s + Number(p.amount || 0), 0);
+  const verifyCount = pays.filter(p => p.status === "Pending" && p.method === UPI_SCAN_LABEL).length;
+
+  let bmi = "-";
+  if (Number(u.weight) > 0 && Number(u.height) > 0) {
+    bmi = (Number(u.weight) / Math.pow(Number(u.height) / 100, 2)).toFixed(1);
+  }
+
+  const bookingsHtml = bookings.length === 0
+    ? `<div class="empty-state">No classes booked yet. <a onclick="navigate('classes')" style="color:#ff4c29;">Browse classes</a></div>`
+    : bookings.map(b => {
+        const p = allPays.find(x => x.id === b.paymentId);
+        const badge = p ? statusBadge(p.status) : "";
+        const doneToday = att.some(a => a.date === today && a.ref === "class-" + b.classId);
+        return `
+        <div class="booking-row">
+          <div><strong>${esc(b.title)}</strong> ${badge}<br><span style="color:#aaa;font-size:13px;">${esc(b.time)}</span></div>
+          <div class="actions">
+            <button class="btn-primary btn-small" onclick="markClassAttendance(${b.classId})" ${doneToday ? "disabled" : ""}>${doneToday ? "Attended today" : "Mark attendance"}</button>
+            <button class="cancel-btn" onclick="cancelBooking('${b.classId}')">Cancel</button>
+          </div>
+        </div>`;
+      }).join("");
+
+  const payHtml = pays.length === 0
+    ? `<div class="empty-state">Nothing here yet.</div>`
+    : `<div class="table-scroll"><table class="pay-table"><thead><tr><th>Date</th><th>Ref</th><th>Item</th><th>Amount</th><th>Method</th><th>Status</th></tr></thead><tbody>` +
+      pays.map(p => `<tr><td>${fmtDate(p.date)}</td><td>${esc(p.id)}</td><td>${esc(p.title)}</td><td>${p.amount > 0 ? inr(p.amount) : "Included"}</td><td>${esc(p.method || "-")}${p.detail && p.method !== "Included" ? " (" + esc(p.detail) + ")" : ""}</td><td>${statusBadge(p.status)}</td></tr>`).join("") +
+      `</tbody></table></div>`;
+
+  const inqHtml = inqs.length === 0
+    ? `<div class="empty-state">No inquiries yet. Use the chat button at the bottom right to ask us anything.</div>`
+    : inqs.map(i => `
+        <div class="inq-row">
+          <div class="inq-top"><span>${esc(i.id)} &middot; ${fmtDate(i.date)}</span>${statusBadge(i.status)}</div>
+          ${esc(i.message)}
+          ${i.reply ? `<div class="inq-reply"><b>PowerFit team:</b> ${esc(i.reply)}</div>` : ""}
+        </div>`).join("");
+
+  const trainerReqHtml = trainerReqs.length === 0
+    ? `<div class="empty-state">No sessions requested yet.</div>`
+    : trainerReqs.map(r => {
+        const p = r.paymentId ? allPays.find(x => x.id === r.paymentId) : null;
+        return `
+        <div class="inq-row">
+          <div class="inq-top"><span>${esc(r.id)} &middot; with ${esc(r.trainer)}</span>${statusBadge(r.status)}</div>
+          ${fmtDate(r.date)} at ${esc(r.time)}${r.note ? " &middot; " + esc(r.note) : ""}
+          ${p ? `<div style="margin-top:6px;font-size:12px;color:#888;">Payment: ${p.amount > 0 ? inr(p.amount) : "Included"} &middot; ${esc(p.method)} &middot; ${esc(p.status)}</div>` : ""}
+        </div>`;
+      }).join("");
+
+  const recentHtml = att.length === 0
+    ? `<div class="recent-att"><div>No attendance marked yet.</div></div>`
+    : `<div class="recent-att">` + att.slice().reverse().slice(0, 5).map(a => `<div><span>${esc(a.label)}</span><span>${fmtDate(a.date)}</span></div>`).join("") + `</div>`;
+
+  const goalOpt = g => `<option value="${g}" ${u.goal === g ? "selected" : ""}>${g || "Select goal"}</option>`;
+
+  root.innerHTML = `
+    <div class="profile-head">
+      <div class="avatar">${esc(initials)}</div>
+      <div>
+        <h2>${esc(u.name)}</h2>
+        <p>${esc(u.email)}${u.phone ? " &middot; " + esc(u.phone) : ""}</p>
+        <p style="margin-top:6px;">${memActive
+          ? `<span class="badge good">${esc(mem.plan)} member</span> valid till ${fmtDate(mem.end)}`
+          : `<span class="badge mute">No active plan</span>`}</p>
+      </div>
+      <div class="head-actions">
+        <button class="btn-primary" onclick="gymCheckIn()" ${gymDoneToday ? "disabled" : ""}>${gymDoneToday ? "Checked in today" : "Gym check-in"}</button>
+      </div>
+    </div>
+
+    <div class="panel-grid">
+      <div class="panel">
+        <h3>My details</h3>
+        <p class="sub">Keep these updated so your trainer can plan your program.</p>
+        <div class="form-grid">
+          <div class="full"><label>Full name</label><input id="pfName" value="${esc(u.name)}" /></div>
+          <div class="full"><label>Email (cannot be changed)</label><input value="${esc(u.email)}" readonly /></div>
+          <div><label>Phone</label><input id="pfPhone" type="tel" value="${esc(u.phone)}" /></div>
+          <div><label>Age</label><input id="pfAge" type="number" min="10" max="99" value="${esc(u.age)}" /></div>
+          <div><label>Weight (kg)</label><input id="pfWeight" type="number" min="20" max="300" value="${esc(u.weight)}" /></div>
+          <div><label>Height (cm)</label><input id="pfHeight" type="number" min="100" max="250" value="${esc(u.height)}" /></div>
+          <div class="full"><label>Fitness goal</label>
+            <select id="pfGoal">${goalOpt("")}${goalOpt("Weight Loss")}${goalOpt("Weight Gain")}${goalOpt("Stay Fit")}</select>
+          </div>
+        </div>
+        <div class="save-row"><button class="btn-primary btn-small" onclick="saveProfile()">Save details</button><span class="save-msg" id="pfSaveMsg"></span></div>
+      </div>
+
+      <div class="panel">
+        <h3>Membership</h3>
+        <p class="sub">Your current plan and account info.</p>
+        <div class="info-list">
+          <div><span>Plan</span><span>${memActive ? esc(mem.plan) : "None"}</span></div>
+          <div><span>Started</span><span>${memActive ? fmtDate(mem.start) : "-"}</span></div>
+          <div><span>Valid till</span><span>${memActive ? fmtDate(mem.end) : "-"}</span></div>
+          <div><span>Member since</span><span>${fmtDate(u.joined)}</span></div>
+          <div><span>Goal</span><span>${esc(u.goal) || "-"}</span></div>
+          <div><span>BMI</span><span>${bmi}</span></div>
+          <div><span>Due at reception</span><span>${dueTotal > 0 ? inr(dueTotal) : "Nothing due"}</span></div>
+          ${verifyCount > 0 ? `<div><span>UPI payments being verified</span><span>${verifyCount}</span></div>` : ""}
+        </div>
+        <div style="margin-top:18px;"><button class="btn-outline btn-small" onclick="navigate('pricing')">${memActive ? "Change plan" : "Choose a plan"}</button></div>
+      </div>
+    </div>
+
+    <div class="panel-grid">
+      <div class="panel">
+        <h3>Attendance</h3>
+        <p class="sub">Orange days are days you trained this month.</p>
+        <div class="stat-grid">
+          <div class="stat"><b>${monthDays.size}</b><span>Days this month</span></div>
+          <div class="stat"><b>${pct}%</b><span>Month attendance</span></div>
+          <div class="stat"><b>${classCount}</b><span>Classes attended</span></div>
+        </div>
+        ${renderCalendar(att)}
+        ${recentHtml}
+      </div>
+
+      <div class="panel">
+        <h3>My bookings</h3>
+        <p class="sub">Mark attendance after each class, or cancel a booking. Online payments for cancelled bookings show as Refund pending.</p>
+        ${bookingsHtml}
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Payments and booking history</h3>
+      <p class="sub">All your membership, class and trainer session payments.</p>
+      ${payHtml}
+    </div>
+
+    <div class="panel-grid">
+      <div class="panel">
+        <h3>Weight progress</h3>
+        <p class="sub">Log your weight to see your trend over your last 10 entries.</p>
+        <div class="progress-form">
+          <input id="pgWeight" type="number" min="20" max="300" step="0.1" placeholder="Today's weight (kg)" />
+          <button class="btn-primary btn-small" onclick="addProgressLog()">Log weight</button>
+        </div>
+        ${renderProgressChart(cu.email)}
+      </div>
+
+      <div class="panel">
+        <h3>Refer a friend</h3>
+        <p class="sub">Share your code \u2014 friends who join with it help you both get a loyalty perk at reception.</p>
+        <div class="referral-code-box">
+          <code>${esc(referralCode)}</code>
+          <button class="btn-outline btn-small" onclick="copyReferralCode('${esc(referralCode)}')">Copy code</button>
+          <span class="save-msg" id="referralCopyMsg"></span>
+        </div>
+        <div class="referral-stat-row">
+          <div class="stat" style="flex:1;"><b>${referralUses}</b><span>Friends joined</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>My inquiries</h3>
+      <p class="sub">Messages you sent to our team from the chat box, with replies.</p>
+      ${inqHtml}
+    </div>
+
+    <div class="panel">
+      <h3>Trainer session requests</h3>
+      <p class="sub">1-on-1 sessions you've requested from the Trainers page.</p>
+      ${trainerReqHtml}
+    </div>`;
+}
+
+async function saveProfile() {
+  const cu = getCurrentUser();
+  if (!cu) return;
+  const name = document.getElementById("pfName").value.trim();
+  if (!name) { alert("Name cannot be empty"); return; }
+  let msg = document.getElementById("pfSaveMsg");
+  try {
+    await updateUser(cu.email, {
+      name: name,
+      phone: document.getElementById("pfPhone").value.trim(),
+      age: document.getElementById("pfAge").value,
+      weight: document.getElementById("pfWeight").value,
+      height: document.getElementById("pfHeight").value,
+      goal: document.getElementById("pfGoal").value
+    });
+    setCurrentUser(Object.assign({}, cu, { name: name }));
+    updateNavbar();
+    renderProfile();
+    msg = document.getElementById("pfSaveMsg");
+    msg.textContent = "Details saved";
+    setTimeout(() => { if (msg) msg.textContent = ""; }, 2500);
+  } catch (error) {
+    console.error("Could not save gym member profile:", error);
+    msg.textContent = error.message || "Could not save details. Please try again.";
+  }
+}
+
+// Shared by the member (Cancel button) and the admin (Remove booking).
+// Paid online -> "Refund pending" so the admin can process it. Anything else -> "Cancelled".
+async function cancelBookingFor(email, classId) {
+  const all = getBookings();
+  const target = all.find(b => b.classId == classId && b.email === email);
+  if (target) {
+    savePayments(getPayments().map(p => {
+      if (p.id === target.paymentId) p.status = isPaid(p.status) && p.amount > 0 ? "Refund pending" : "Cancelled";
+      return p;
+    }));
+  }
+  if (window.gymSupabase) {
+    try {
+      const { error } = await window.gymSupabase
+        .from("gym_bookings")
+        .delete()
+        .eq("class_id", classId)
+        .eq("member_email", email);
+      if (error) console.error("Could not delete booking from Supabase:", error);
+    } catch (e) { console.error(e); }
+  }
+  saveBookings(all.filter(b => !(b.classId == classId && b.email === email)));
+}
+
+async function cancelBooking(classId) {
+  const user = getCurrentUser();
+  if (!user) return;
+  await cancelBookingFor(user.email, classId);
+  renderProfile();
+  renderClasses();
+}
+
+/* ---------- diet ---------- */
+const dietPlans = {
+  loss: {
+    note: "A calorie-controlled, high-protein plan to support fat loss while preserving muscle. Adjust portions to your body weight and activity level.",
+    meals: [
+      { meal: "Breakfast", food: "2 boiled eggs (or a bowl of poha), 1 cup green tea/black coffee, a handful of nuts" },
+      { meal: "Mid-morning", food: "1 apple or a bowl of papaya" },
+      { meal: "Lunch", food: "1-2 rotis, grilled chicken/paneer/dal, a large bowl of salad, sautéed vegetables" },
+      { meal: "Evening Snack", food: "Roasted chana or sprouts salad, green tea" },
+      { meal: "Dinner", food: "Grilled fish/chicken/tofu, steamed vegetables, small bowl of soup" },
+      { meal: "Before Bed", food: "Warm water or herbal tea (avoid heavy carbs late at night)" },
+    ]
+  },
+  gain: {
+    note: "A calorie-surplus, protein-rich plan to support healthy muscle gain alongside strength training. Increase portions gradually and stay consistent.",
+    meals: [
+      { meal: "Breakfast", food: "4 eggs or paneer bhurji, 2-3 parathas/oats with milk, a banana" },
+      { meal: "Mid-morning", food: "Peanut butter sandwich or a protein shake with milk" },
+      { meal: "Lunch", food: "2-3 rotis or rice, chicken/paneer/rajma curry, a bowl of curd, mixed vegetables" },
+      { meal: "Evening Snack", food: "Dry fruits, banana shake or a cheese sandwich" },
+      { meal: "Dinner", food: "Rice/roti, dal or meat curry, vegetables, a glass of milk" },
+      { meal: "Before Bed", food: "A glass of warm milk with nuts" },
+    ]
+  }
+};
+
+let currentDietType = "loss";
+
+function renderDiet(type) {
+  if (type) currentDietType = type;
+  const plan = dietPlans[currentDietType];
+  document.getElementById("dietBtnLoss").classList.toggle("active", currentDietType === "loss");
+  document.getElementById("dietBtnGain").classList.toggle("active", currentDietType === "gain");
+  document.getElementById("dietNote").textContent = plan.note;
+  document.getElementById("dietTableBody").innerHTML = plan.meals.map(m => `
+    <tr><td>${m.meal}</td><td>${m.food}</td></tr>
+  `).join("");
+}
+
+function openDietModal(title, text) {
+  document.getElementById("dietModalTitle").textContent = title;
+  document.getElementById("dietModalText").textContent = text;
+  document.getElementById("dietModalOverlay").classList.add("open");
+}
+function closeDietModal() { document.getElementById("dietModalOverlay").classList.remove("open"); }
+function goToDietFromModal(type) { closeDietModal(); navigate("diet"); renderDiet(type); }
+
+/* =====================================================================
+   CUSTOMER FEATURES
+   1. Testimonials  2. FAQ accordion  3. Trainer 1-on-1 requests (paid)
+   4. Progress tracker (weight log + chart)  5. Referral program
+   6. Class search/filter (see renderClasses above)  + intro video (home)
+   ===================================================================== */
+
+/* ---- 1. Testimonials ---- */
+function renderTestimonials() {
+  const grid = document.getElementById("testimonialGrid");
+  if (!grid) return;
+  grid.innerHTML = testimonialsData.map(t => `
+    <div class="testimonial-card">
+      <div class="testimonial-stars">${"\u2605".repeat(t.stars)}${"\u2606".repeat(5 - t.stars)}</div>
+      <p class="quote">"${esc(t.quote)}"</p>
+      <div class="testimonial-who">
+        <div class="testimonial-avatar">${esc(t.name.split(" ").map(w => w[0]).join(""))}</div>
+        <div><b>${esc(t.name)}</b><span>${esc(t.tag)}</span></div>
+      </div>
+    </div>`).join("");
+}
+
+/* ---- 2. FAQ accordion ---- */
+function renderFaq() {
+  const wrap = document.getElementById("faqWrap");
+  if (!wrap) return;
+  wrap.innerHTML = faqData.map((f, i) => `
+    <div class="faq-item" id="faqItem${i}">
+      <div class="faq-q" onclick="toggleFaq(${i})"><span>${esc(f.q)}</span><span class="plus">+</span></div>
+      <div class="faq-a"><p>${esc(f.a)}</p></div>
+    </div>`).join("");
+}
+function toggleFaq(i) {
+  document.getElementById("faqItem" + i).classList.toggle("open");
+}
+
+/* ---- 3. Trainer 1-on-1 session requests (fee: Rs 500, free on Elite) ---- */
+let trainerReqIndex = null;
+
+function openTrainerRequest(trainerIdx) {
+  const user = getCurrentUser();
+  if (!user) { navigate("login"); return; }
+  if (user.isAdmin) return;
+  trainerReqIndex = trainerIdx;
+  const fee = trainerFee();
+  document.getElementById("trainerReqSub").textContent =
+    "Request a personal session with " + trainersData[trainerIdx].name + " (" + trainersData[trainerIdx].role + "). " +
+    (fee > 0 ? "Session fee: " + inr(fee) + "." : "Included in your Elite plan.");
+  document.getElementById("trReqBtn").textContent = fee > 0 ? "Continue to payment" : "Send request";
+  document.getElementById("trReqDate").value = "";
+  document.getElementById("trReqDate").min = todayStr();
+  document.getElementById("trReqTime").value = "";
+  document.getElementById("trReqNote").value = "";
+  document.getElementById("trainerReqOverlay").classList.add("open");
+}
+function closeTrainerRequest() { document.getElementById("trainerReqOverlay").classList.remove("open"); }
+
+function submitTrainerRequest() {
+  const user = getCurrentUser();
+  if (!user || trainerReqIndex === null) return;
+  const date = document.getElementById("trReqDate").value;
+  const time = document.getElementById("trReqTime").value;
+  if (!date || !time) { alert("Please choose a preferred date and time"); return; }
+  if (date < todayStr()) { alert("Please choose today or a future date"); return; }
+  const t = trainersData[trainerReqIndex];
+  const draft = { trainer: t.name, date, time, note: document.getElementById("trReqNote").value.trim() };
+  closeTrainerRequest();
+  openPayment({ kind: "trainer", refId: "", title: "1-on-1 session with " + t.name, amount: trainerFee(), draft });
+}
+
+/* ---- 4. Progress tracker (weight log + simple chart) ---- */
+function getProgressLogs(email) {
+  return JSON.parse(localStorage.getItem("gym_progress") || "[]").filter(p => p.email === email);
+}
+function addProgressLog() {
+  const user = getCurrentUser();
+  if (!user) return;
+  const weight = Number(document.getElementById("pgWeight").value);
+  if (!weight || weight <= 0) { alert("Enter a valid weight in kg"); return; }
+  const all = JSON.parse(localStorage.getItem("gym_progress") || "[]");
+  all.push({ email: user.email, date: todayStr(), weight: weight });
+  localStorage.setItem("gym_progress", JSON.stringify(all.slice(-500)));
+  renderProfile();
+}
+function renderProgressChart(email) {
+  const logs = getProgressLogs(email).slice(-10);
+  if (logs.length === 0) return `<div class="empty-state">No weight logs yet. Add your first entry above to start your chart.</div>`;
+  const max = Math.max(...logs.map(l => l.weight));
+  const min = Math.min(...logs.map(l => l.weight));
+  const range = Math.max(max - min, 1);
+  const bars = logs.map(l => {
+    const h = 20 + Math.round(((l.weight - min) / range) * 90);
+    const lbl = fmtDate(l.date).replace(/ \d{4}$/, "");
+    return `<div class="progress-bar-col"><div class="val">${l.weight}</div><div class="bar" style="height:${h}px;"></div><div class="lbl">${lbl}</div></div>`;
+  }).join("");
+  return `<div class="progress-chart">${bars}</div>`;
+}
+
+/* ---- 5. Referral program ---- */
+function getReferralCode(user) {
+  const namePart = (user.name || "MEMBER").replace(/[^a-zA-Z]/g, "").slice(0, 5).toUpperCase() || "MEMBER";
+  let hash = 0;
+  for (let i = 0; i < user.email.length; i++) hash = (hash * 31 + user.email.charCodeAt(i)) % 9000;
+  return "PF-" + namePart + "-" + (1000 + hash);
+}
+function countReferralUses(code) {
+  return getUsers().filter(u => u.referredBy === code).length;
+}
+function copyReferralCode(code) {
+  const done = () => {
+    const el = document.getElementById("referralCopyMsg");
+    if (el) { el.textContent = "Copied!"; setTimeout(() => { if (el) el.textContent = ""; }, 2000); }
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(code).then(done).catch(done);
+  } else { done(); }
+}
+
+/* =====================================================================
+   ADMIN DASHBOARD
+   Gym admins are authorized by the Supabase app_metadata role.
+   Tabs: Overview, Members, Payments, Bookings, Attendance,
+         Trainer requests, Inquiries, Classes
+   ===================================================================== */
+let adminTab = "overview";
+let adminPayFilter = "All";
+let adminMemberQ = "";
+let adminAttDate = "";
+const ADMIN_TABS = [
+  ["overview", "Overview"], ["members", "Members"], ["payments", "Payments"], ["bookings", "Bookings"],
+  ["attendance", "Attendance"], ["trainers", "Trainer requests"], ["inquiries", "Inquiries"], ["classes", "Classes"]
+];
+
+function userName(email) {
+  const u = getUsers().find(x => x.email === email);
+  return u ? u.name : email;
+}
+function sumAmt(list) { return list.reduce((s, p) => s + Number(p.amount || 0), 0); }
+function downloadCsv(name, rows) {
+  const csv = rows.map(r => r.map(c => '"' + String(c == null ? "" : c).replace(/"/g, '""') + '"').join(",")).join("\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+  a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+function setAdminTab(t) { adminTab = t; renderAdmin(); }
+
+function renderAdmin() {
+  if (!isAdmin()) return;
+  const root = document.getElementById("adminRoot");
+  const pays = getPayments();
+  const counts = {
+    payments: pays.filter(p => p.status === "Pending" || p.status === "Refund pending").length,
+    members: gymMembershipRequests.length,
+    trainers: getTrainerRequests().filter(r => r.status === "Pending").length,
+    inquiries: getInquiries().filter(i => i.status === "Open").length
+  };
+  const tabs = ADMIN_TABS.map(t =>
+    `<button class="${t[0] === adminTab ? "active" : ""}" onclick="setAdminTab('${t[0]}')">${t[1]}${counts[t[0]] ? " (" + counts[t[0]] + ")" : ""}</button>`
+  ).join("");
+  const views = {
+    overview: adminOverviewHtml, members: adminMembersHtml, payments: adminPaymentsHtml, bookings: adminBookingsHtml,
+    attendance: adminAttendanceHtml, trainers: adminTrainersHtml, inquiries: adminInquiriesHtml, classes: adminClassesHtml
+  };
+  root.innerHTML = `
+    <div class="admin-top">
+      <div><h2>Admin dashboard</h2><p>Manage members, payments, classes and requests.</p></div>
+      <button class="btn-outline btn-small" onclick="navigate('home')">View website</button>
+    </div>
+    <div class="admin-tabs">${tabs}</div>
+    ${views[adminTab]()}`;
+}
+
+/* ---- Overview ---- */
+function adminOverviewHtml() {
+  const today = todayStr(), month = today.slice(0, 7);
+  const users = getUsers(), pays = getPayments();
+  const active = users.filter(u => u.membership && u.membership.end >= today);
+  const paid = pays.filter(p => isPaid(p.status));
+  const pend = pays.filter(p => p.status === "Pending");
+  const refunds = pays.filter(p => p.status === "Refund pending");
+  const todayCheckins = new Set(getAttendance().filter(a => a.date === today).map(a => a.email)).size;
+
+  const byMethod = {};
+  paid.forEach(p => { const k = p.method || "Earlier bookings"; byMethod[k] = (byMethod[k] || 0) + Number(p.amount || 0); });
+  const maxM = Math.max(1, ...Object.values(byMethod));
+  const methodBars = Object.keys(byMethod).length === 0
+    ? `<div class="empty-state">No paid payments yet.</div>`
+    : Object.entries(byMethod).sort((a, b) => b[1] - a[1]).map(([k, v]) =>
+        `<div class="bar-row"><span class="name">${esc(k)}</span><div class="track"><div class="fill" style="width:${Math.round(v / maxM * 100)}%"></div></div><span class="amt">${inr(v)}</span></div>`).join("");
+
+  const planCount = { Basic: 0, Pro: 0, Elite: 0 };
+  active.forEach(u => { if (planCount[u.membership.plan] != null) planCount[u.membership.plan]++; });
+  const maxP = Math.max(1, ...Object.values(planCount));
+  const planBars = Object.entries(planCount).map(([k, v]) =>
+    `<div class="bar-row"><span class="name">${k}</span><div class="track"><div class="fill" style="width:${Math.round(v / maxP * 100)}%"></div></div><span class="amt">${v} member${v === 1 ? "" : "s"}</span></div>`).join("");
+
+  const recent = pays.slice(-5).reverse();
+  const recentHtml = recent.length === 0
+    ? `<div class="empty-state">No payments yet.</div>`
+    : `<div class="table-scroll"><table class="pay-table"><thead><tr><th>Date</th><th>Member</th><th>Item</th><th>Amount</th><th>Method</th><th>Status</th></tr></thead><tbody>` +
+      recent.map(p => `<tr><td>${fmtDate(p.date)}</td><td>${esc(userName(p.email))}</td><td>${esc(p.title)}</td><td>${p.amount > 0 ? inr(p.amount) : "Included"}</td><td>${esc(p.method || "-")}</td><td>${statusBadge(p.status)}</td></tr>`).join("") +
+      `</tbody></table></div>`;
+
+  return `
+    <div class="admin-stats">
+      <div class="admin-stat accent"><b>${inr(sumAmt(paid))}</b><span>Total collected</span></div>
+      <div class="admin-stat"><b>${inr(sumAmt(paid.filter(p => p.date.startsWith(month))))}</b><span>Collected this month</span></div>
+      <div class="admin-stat"><b>${inr(sumAmt(pend))}</b><span>Waiting for confirmation (${pend.length})</span></div>
+      <div class="admin-stat"><b>${refunds.length}</b><span>Refunds to process</span></div>
+      <div class="admin-stat"><b>${users.length}</b><span>Total members</span></div>
+      <div class="admin-stat"><b>${active.length}</b><span>Active memberships</span></div>
+      <div class="admin-stat"><b>${todayCheckins}</b><span>Members in today</span></div>
+      <div class="admin-stat"><b>${getBookings().length}</b><span>Class bookings</span></div>
+    </div>
+    <div class="panel-grid">
+      <div class="panel"><h3>Collected by payment method</h3><p class="sub">Paid payments only.</p>${methodBars}</div>
+      <div class="panel"><h3>Active plans</h3><p class="sub">Members with a valid membership today.</p>${planBars}</div>
+    </div>
+    <div class="panel"><h3>Latest payments</h3><p class="sub">Open the Payments tab to mark cash received or refunds done.</p>${recentHtml}</div>`;
+}
+
+/* ---- Members ---- */
+function membersTableHtml(q) {
+  q = (q || "").toLowerCase();
+  const today = todayStr(), month = today.slice(0, 7), att = getAttendance();
+  const list = getUsers().filter(u => !q || [u.name, u.email, u.phone].join(" ").toLowerCase().includes(q));
+  if (list.length === 0) return `<div class="empty-state">No members found.</div>`;
+  return `<div class="table-scroll"><table class="pay-table admin-table"><thead><tr><th>Member</th><th>Phone</th><th>Plan</th><th>Valid till</th><th>Joined</th><th>Days this month</th><th></th></tr></thead><tbody>` +
+    list.map(u => {
+      const isActive = u.membership && u.membership.end >= today;
+      const plan = isActive ? u.membership.plan : "";
+      const days = new Set(att.filter(a => a.email === u.email && a.date.startsWith(month)).map(a => a.date)).size;
+      const opt = p => `<option value="${p}" ${plan === p ? "selected" : ""}>${p || "No plan"}</option>`;
+      return `<tr>
+        <td class="who"><b>${esc(u.name)}</b><span>${esc(u.email || "Added by gym staff")}</span></td>
+        <td>${esc(u.phone || "-")}</td>
+        <td><select data-member-id="${esc(u.id)}" onchange="adminSetPlan(this.dataset.memberId, this.value)">${opt("")}${opt("Basic")}${opt("Pro")}${opt("Elite")}</select></td>
+        <td>${isActive ? fmtDate(u.membership.end) : "-"}</td>
+        <td>${fmtDate(u.joined)}</td>
+        <td>${days}</td>
+        <td><button class="mini-btn danger" data-member-id="${esc(u.id)}" onclick="adminDeleteMember(this.dataset.memberId)">Delete</button></td>
+      </tr>`;
+    }).join("") + `</tbody></table></div>`;
+}
+function adminMembersHtml() {
+  const requestsHtml = gymMembershipRequests.length
+    ? `<div class="panel" style="margin-top:18px;"><h3>Package requests</h3><p class="sub">Approve a package after verifying payment.</p>
+        <div class="table-scroll"><table class="pay-table admin-table"><thead><tr><th>Member</th><th>Package</th><th>Requested</th><th></th></tr></thead><tbody>
+        ${gymMembershipRequests.map(request => {
+          const member = getUsers().find(user => user.id === request.member_id);
+          return `<tr>
+            <td class="who"><b>${esc(member ? member.name : "Member")}</b><span>${esc(member ? member.email : request.member_id)}</span></td>
+            <td>${esc(request.package)}</td>
+            <td>${fmtDate(String(request.requested_at).slice(0, 10))}</td>
+            <td><div class="act-row">
+              <button class="mini-btn ok" onclick="adminResolveMembershipRequest('${esc(request.id)}', true)">Approve</button>
+              <button class="mini-btn danger" onclick="adminResolveMembershipRequest('${esc(request.id)}', false)">Reject</button>
+            </div></td>
+          </tr>`;
+        }).join("")}
+        </tbody></table></div></div>`
+    : "";
+  return `<div class="panel">
+    <h3>Members</h3><p class="sub">Change a plan from the dropdown (starts today for 30 days). Deleting a member also removes their bookings, attendance and session requests.</p>
+    <form class="admin-toolbar" onsubmit="adminCreateMember(event)">
+      <input class="grow" id="admMemberName" placeholder="Customer name" required maxlength="120" />
+      <input class="grow" id="admMemberPhone" type="tel" placeholder="Phone number" required maxlength="30" />
+      <input id="admMemberJoined" type="date" value="${todayStr()}" required />
+      <select id="admMemberPackage">
+        <option value="">No package</option>
+        <option value="Basic">Basic</option>
+        <option value="Pro">Pro</option>
+        <option value="Elite">Elite</option>
+      </select>
+      <button class="btn-primary btn-small" type="submit">Add member</button>
+    </form>
+    <div class="admin-toolbar">
+      <input class="grow" id="admMemberSearch" placeholder="Search by name, email or phone" value="${esc(adminMemberQ)}" oninput="adminFilterMembers(this.value)" />
+      <button class="btn-outline btn-small" onclick="adminExportMembers()">Export CSV</button>
+    </div>
+    <div id="admMembersTbl">${membersTableHtml(adminMemberQ)}</div>
+  </div>${requestsHtml}`;
+}
+function adminFilterMembers(v) {
+  adminMemberQ = v;
+  document.getElementById("admMembersTbl").innerHTML = membersTableHtml(v);
+}
+async function adminCreateMember(event) {
+  event.preventDefault();
+  const name = document.getElementById("admMemberName").value.trim();
+  const phone = document.getElementById("admMemberPhone").value.trim();
+  const joined = document.getElementById("admMemberJoined").value;
+  const packageName = document.getElementById("admMemberPackage").value || null;
+  const phoneDigits = phone.replace(/\D/g, "");
+  if (phoneDigits.length < 7 || phoneDigits.length > 15) {
+    window.alert("Enter a valid phone number with 7 to 15 digits.");
+    return;
+  }
+
+  try {
+    const { error } = await window.gymSupabase.rpc("admin_create_gym_member", {
+      target_name: name,
+      target_phone: phone,
+      target_joining_date: joined,
+      target_package: packageName
+    });
+    if (error) throw error;
+    await refreshGymMembers();
+    renderAdmin();
+  } catch (error) {
+    console.error("Could not add gym member:", error);
+    window.alert(error.message || "Could not add the member.");
+  }
+}
+async function adminSetPlan(memberId, plan) {
+  const member = getUsers().find(u => u.id === memberId);
+  if (!member) {
+    window.alert("Gym member was not found. Refresh the page and try again.");
+    return;
+  }
+  const name = member.name;
+  const msg = plan ? "Set " + name + " to the " + plan + " plan for 30 days from today?" : "Remove the membership for " + name + "?";
+  if (!confirm(msg)) { renderAdmin(); return; }
+  try {
+    const { error } = await window.gymSupabase.rpc("admin_set_gym_package", {
+      target_member_id: member.id,
+      target_package: plan || null
+    });
+    if (error) throw error;
+    await refreshGymMembers();
+    renderAdmin();
+  } catch (error) {
+    console.error("Could not update gym package:", error);
+    window.alert(error.message || "Could not update the member package.");
+  }
+}
+async function adminResolveMembershipRequest(requestId, approve) {
+  try {
+    const { error } = await window.gymSupabase.rpc("admin_resolve_membership_request", {
+      request_id: requestId,
+      approve_request: approve
+    });
+    if (error) throw error;
+    await refreshGymMembers();
+    renderAdmin();
+  } catch (error) {
+    console.error("Could not resolve gym package request:", error);
+    window.alert(error.message || "Could not update the package request.");
+  }
+}
+async function adminDeleteMember(memberId) {
+  const member = getUsers().find(u => u.id === memberId);
+  if (!member) {
+    window.alert("Gym member was not found. Refresh the page and try again.");
+    return;
+  }
+  if (!confirm("Delete " + member.name + "? This removes their member record and any linked account, bookings, attendance and session requests. Payment records are kept.")) return;
+  try {
+    const { error } = await window.gymSupabase.rpc("delete_gym_member", { target_member_id: member.id });
+    if (error) throw error;
+    if (window.gymSupabase) {
+      try {
+        await window.gymSupabase.from("gym_bookings").delete().eq("member_email", member.email);
+        await window.gymSupabase.from("gym_trainer_requests").delete().eq("member_email", member.email);
+        await window.gymSupabase.from("gym_inquiries").delete().eq("customer_email", member.email);
+      } catch (delErr) { console.error("Error cascading deletes in Supabase:", delErr); }
+    }
+    saveBookings(getBookings().filter(b => b.email !== member.email));
+    saveAttendance(getAttendance().filter(a => a.email !== member.email));
+    saveTrainerRequests(getTrainerRequests().filter(r => r.email !== member.email));
+    await refreshAllGymData();
+    renderAdmin();
+  } catch (error) {
+    console.error("Could not delete gym member:", error);
+    window.alert(error.message || "Could not delete the member.");
+  }
+}
+function adminExportMembers() {
+  const rows = [["Name", "Email", "Phone", "Plan", "Valid till", "Joined", "Goal"]];
+  const today = todayStr();
+  getUsers().forEach(u => {
+    const a = u.membership && u.membership.end >= today;
+    rows.push([u.name, u.email, u.phone, a ? u.membership.plan : "", a ? u.membership.end : "", u.joined, u.goal]);
+  });
+  downloadCsv("powerfit-members.csv", rows);
+}
+
+/* ---- Payments ---- */
+function adminPaymentsHtml() {
+  const filters = ["All", "Paid", "Pending", "Refund pending", "Refunded", "Cancelled", "Included in plan"];
+  const list = getPayments().slice().reverse().filter(p =>
+    adminPayFilter === "All" || (adminPayFilter === "Paid" ? isPaid(p.status) : p.status === adminPayFilter));
+  const rows = list.length === 0
+    ? `<div class="empty-state">No payments match this filter.</div>`
+    : `<div class="table-scroll"><table class="pay-table admin-table"><thead><tr><th>Date</th><th>Ref</th><th>Member</th><th>Item</th><th>Amount</th><th>Method</th><th>Status</th><th></th></tr></thead><tbody>` +
+      list.map(p => {
+        let action = "";
+        if (p.status === "Pending") action = `<button class="mini-btn ok" data-id="${esc(p.id)}" onclick="adminPayAction(this.dataset.id, 'Paid')">Mark received</button>`;
+        else if (p.status === "Refund pending") action = `<button class="mini-btn ok" data-id="${esc(p.id)}" onclick="adminPayAction(this.dataset.id, 'Refunded')">Mark refunded</button>`;
+        return `<tr><td>${fmtDate(p.date)}</td><td>${esc(p.id)}</td><td class="who"><b>${esc(userName(p.email))}</b></td><td>${esc(p.title)}</td><td>${p.amount > 0 ? inr(p.amount) : "Included"}</td><td>${esc(p.method || "-")}${p.detail && p.method !== "Included" ? "<br><span style='color:#888;font-size:12px'>" + esc(p.detail) + "</span>" : ""}</td><td>${statusBadge(p.status)}</td><td>${action}</td></tr>`;
+      }).join("") + `</tbody></table></div>`;
+  return `<div class="panel">
+    <h3>Payments</h3><p class="sub">Pending = waiting for you: Pay at gym (cash) or UPI scan &amp; pay (match the UTR with your bank app, then Mark received). Razorpay payments show their payment ID (pay_...) under the method, so match it with your Razorpay dashboard. Refund pending means a paid booking was cancelled.</p>
+    <div class="admin-toolbar">
+      <select onchange="adminPayFilter = this.value; renderAdmin()">${filters.map(f => `<option ${f === adminPayFilter ? "selected" : ""}>${f}</option>`).join("")}</select>
+      <button class="btn-outline btn-small" onclick="adminExportPayments()">Export CSV</button>
+    </div>
+    ${rows}
+  </div>`;
+}
+function adminPayAction(id, status) {
+  savePayments(getPayments().map(p => { if (p.id === id) p.status = status; return p; }));
+  renderAdmin();
+}
+function adminExportPayments() {
+  const rows = [["Date", "Reference", "Member", "Email", "Item", "Amount", "Method", "Detail", "Status"]];
+  getPayments().forEach(p => rows.push([p.date, p.id, userName(p.email), p.email, p.title, p.amount, p.method || "", p.detail || "", p.status]));
+  downloadCsv("powerfit-payments.csv", rows);
+}
+
+/* ---- Bookings ---- */
+function adminBookingsHtml() {
+  const all = getBookings(), pays = getPayments();
+  const summary = classesData.map(c =>
+    `<div class="stat" style="flex:1;min-width:120px;"><b>${all.filter(b => b.classId === c.id).length}</b><span>${esc(c.title)}</span></div>`).join("");
+  const rows = all.length === 0
+    ? `<div class="empty-state">No class bookings yet.</div>`
+    : `<div class="table-scroll"><table class="pay-table admin-table"><thead><tr><th>Member</th><th>Class</th><th>Schedule</th><th>Booked on</th><th>Payment</th><th></th></tr></thead><tbody>` +
+      all.slice().reverse().map(b => {
+        const p = pays.find(x => x.id === b.paymentId);
+        return `<tr><td class="who"><b>${esc(b.memberName || userName(b.email))}</b><span>${esc(b.email)}</span></td><td>${esc(b.title)}</td><td>${esc(b.time)}</td><td>${fmtDate(b.bookedOn)}</td><td>${p ? statusBadge(p.status) : "-"}</td>
+          <td><button class="mini-btn danger" data-email="${esc(b.email)}" data-class="${b.classId}" onclick="adminRemoveBooking(this.dataset.email, this.dataset.class)">Remove</button></td></tr>`;
+      }).join("") + `</tbody></table></div>`;
+  return `<div class="panel">
+    <h3>Class bookings</h3><p class="sub">Removing a paid booking marks its payment as Refund pending.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;">${summary || ""}</div>
+    ${rows}
+  </div>`;
+}
+async function adminRemoveBooking(email, classId) {
+  if (!confirm("Remove this booking for " + userName(email) + "?")) return;
+  await cancelBookingFor(email, classId);
+  renderAdmin();
+}
+
+/* ---- Attendance ---- */
+function adminAttendanceHtml() {
+  if (!adminAttDate) adminAttDate = todayStr();
+  const att = getAttendance();
+  const day = att.filter(a => a.date === adminAttDate);
+  const month = adminAttDate.slice(0, 7);
+  const monthAtt = att.filter(a => a.date.startsWith(month));
+  const perMember = {};
+  monthAtt.forEach(a => { (perMember[a.email] = perMember[a.email] || new Set()).add(a.date); });
+  const top = Object.entries(perMember).map(([e, s]) => [e, s.size]).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const dayRows = day.length === 0
+    ? `<div class="empty-state">No attendance marked on this date.</div>`
+    : `<div class="table-scroll"><table class="pay-table"><thead><tr><th>Member</th><th>Type</th><th>Activity</th></tr></thead><tbody>` +
+      day.map(a => `<tr><td>${esc(userName(a.email))}</td><td>${esc(a.type)}</td><td>${esc(a.label)}</td></tr>`).join("") + `</tbody></table></div>`;
+  const topRows = top.length === 0
+    ? `<div class="empty-state">No attendance this month.</div>`
+    : top.map(([e, n]) => `<div class="bar-row"><span class="name">${esc(userName(e))}</span><div class="track"><div class="fill" style="width:${Math.round(n / top[0][1] * 100)}%"></div></div><span class="amt">${n} day${n === 1 ? "" : "s"}</span></div>`).join("");
+  return `
+    <div class="admin-stats">
+      <div class="admin-stat accent"><b>${new Set(day.map(a => a.email)).size}</b><span>Members on ${fmtDate(adminAttDate)}</span></div>
+      <div class="admin-stat"><b>${monthAtt.length}</b><span>Check-ins in this month</span></div>
+    </div>
+    <div class="panel-grid">
+      <div class="panel">
+        <h3>Attendance by date</h3><p class="sub">Pick a date to see who trained.</p>
+        <div class="admin-toolbar"><input type="date" value="${esc(adminAttDate)}" onchange="adminAttDate = this.value || todayStr(); renderAdmin()" /></div>
+        ${dayRows}
+      </div>
+      <div class="panel"><h3>Most regular members</h3><p class="sub">Training days in the month of the selected date.</p>${topRows}</div>
+    </div>`;
+}
+
+/* ---- Trainer requests ---- */
+function adminTrainersHtml() {
+  const list = getTrainerRequests().slice().reverse(), pays = getPayments();
+  const rows = list.length === 0
+    ? `<div class="empty-state">No session requests yet.</div>`
+    : `<div class="table-scroll"><table class="pay-table admin-table"><thead><tr><th>Ref</th><th>Member</th><th>Trainer</th><th>When</th><th>Note</th><th>Payment</th><th>Status</th><th></th></tr></thead><tbody>` +
+      list.map(r => {
+        const p = r.paymentId ? pays.find(x => x.id === r.paymentId) : null;
+        const acts = r.status === "Pending"
+          ? `<div class="act-row"><button class="mini-btn ok" data-id="${esc(r.id)}" onclick="adminTrainerStatus(this.dataset.id, 'Confirmed')">Confirm</button><button class="mini-btn danger" data-id="${esc(r.id)}" onclick="adminTrainerStatus(this.dataset.id, 'Declined')">Decline</button></div>`
+          : `<button class="mini-btn" data-id="${esc(r.id)}" onclick="adminTrainerStatus(this.dataset.id, 'Pending')">Reopen</button>`;
+        return `<tr><td>${esc(r.id)}</td><td class="who"><b>${esc(userName(r.email))}</b></td><td>${esc(r.trainer)}</td><td>${fmtDate(r.date)} ${esc(r.time)}</td><td>${esc(r.note || "-")}</td><td>${p ? (p.amount > 0 ? inr(p.amount) : "Included") + " " + statusBadge(p.status) : "-"}</td><td>${statusBadge(r.status)}</td><td>${acts}</td></tr>`;
+      }).join("") + `</tbody></table></div>`;
+  return `<div class="panel"><h3>Trainer session requests</h3><p class="sub">Confirm or decline 1-on-1 sessions. Members see the status on their profile.</p>${rows}</div>`;
+}
+async function adminTrainerStatus(id, status) {
+  if (window.gymSupabase) {
+    try {
+      const { error } = await window.gymSupabase.from("gym_trainer_requests").update({ status }).eq("id", id);
+      if (error) console.error("Admin trainer status error:", error);
+    } catch (e) { console.error(e); }
+  }
+  saveTrainerRequests(getTrainerRequests().map(r => { if (r.id === id) r.status = status; return r; }));
+  renderAdmin();
+}
+
+/* ---- Inquiries ---- */
+function adminInquiriesHtml() {
+  const list = getInquiries().slice().reverse();
+  const rows = list.length === 0
+    ? `<div class="empty-state">No inquiries yet.</div>`
+    : list.map(i => `
+      <div class="inq-row">
+        <div class="inq-top"><span>${esc(i.id)} &middot; ${fmtDate(i.date)} &middot; ${esc(i.name)} &middot; ${esc(i.phone || "no phone")}${i.email ? " &middot; " + esc(i.email) : ""}</span>${statusBadge(i.status)}</div>
+        ${esc(i.message)}
+        ${i.reply ? `<div class="inq-reply"><b>Your reply:</b> ${esc(i.reply)}</div>` : ""}
+        <div class="act-row" style="display:flex;gap:8px;margin-top:10px;">
+          ${i.email ? `<button class="mini-btn" data-id="${esc(i.id)}" onclick="adminReplyInquiry(this.dataset.id)">${i.reply ? "Edit reply" : "Reply"}</button>` : ""}
+          <button class="mini-btn ${i.status === "Open" ? "ok" : ""}" data-id="${esc(i.id)}" onclick="adminToggleInquiry(this.dataset.id)">${i.status === "Open" ? "Mark resolved" : "Reopen"}</button>
+        </div>
+      </div>`).join("");
+  return `<div class="panel"><h3>Customer inquiries</h3><p class="sub">Replies show on the member's profile. Guests who did not log in have no profile, so call them on the number given.</p>${rows}</div>`;
+}
+async function adminReplyInquiry(id) {
+  const inq = getInquiries().find(i => i.id === id);
+  if (!inq) return;
+  const text = prompt("Reply to " + inq.name + ":", inq.reply || "");
+  if (text === null) return;
+  const replyText = text.trim();
+  const newStatus = replyText ? "Resolved" : inq.status;
+  if (window.gymSupabase) {
+    try {
+      const { error } = await window.gymSupabase.from("gym_inquiries").update({
+        reply: replyText,
+        status: newStatus
+      }).eq("id", id);
+      if (error) console.error("Admin inquiry reply error:", error);
+    } catch (e) { console.error(e); }
+  }
+  saveInquiries(getInquiries().map(i => { if (i.id === id) { i.reply = replyText; if (i.reply) i.status = newStatus; } return i; }));
+  renderAdmin();
+}
+async function adminToggleInquiry(id) {
+  const inq = getInquiries().find(i => i.id === id);
+  if (!inq) return;
+  const newStatus = inq.status === "Open" ? "Resolved" : "Open";
+  if (window.gymSupabase) {
+    try {
+      const { error } = await window.gymSupabase.from("gym_inquiries").update({ status: newStatus }).eq("id", id);
+      if (error) console.error("Admin inquiry status toggle error:", error);
+    } catch (e) { console.error(e); }
+  }
+  saveInquiries(getInquiries().map(i => { if (i.id === id) i.status = newStatus; return i; }));
+  renderAdmin();
+}
+
+/* ---- Classes ---- */
+function adminClassesHtml() {
+  const all = getBookings();
+  const rows = classesData.length === 0
+    ? `<div class="empty-state">No classes yet. Add one below.</div>`
+    : `<div class="table-scroll"><table class="pay-table admin-table"><thead><tr><th>Class</th><th>Category</th><th>Schedule</th><th>Price (Rs / month)</th><th>Bookings</th><th></th></tr></thead><tbody>` +
+      classesData.map(c => `<tr>
+        <td class="who"><b>${esc(c.title)}</b></td><td>${esc(c.category)}</td>
+        <td><input id="clsTime${c.id}" value="${esc(c.time)}" style="min-width:210px;" /></td>
+        <td><input id="clsPrice${c.id}" type="number" min="0" value="${esc(c.price)}" style="width:100px;" /></td>
+        <td>${all.filter(b => b.classId === c.id).length}</td>
+        <td><div class="act-row"><button class="mini-btn ok" onclick="adminSaveClass(${c.id})">Save</button><button class="mini-btn danger" onclick="adminDeleteClass(${c.id})">Delete</button></div></td>
+      </tr>`).join("") + `</tbody></table></div>`;
+  return `
+    <div class="panel"><h3>Classes</h3><p class="sub">Edit the schedule and price. Changes show on the Classes page right away.</p>${rows}</div>
+    <div class="panel">
+      <h3>Add a class</h3><p class="sub">New classes appear on the Classes page for members to book.</p>
+      <div class="add-class-grid">
+        <div><label>Title</label><input id="acTitle" /></div>
+        <div><label>Schedule</label><input id="acTime" placeholder="Mon, Wed - 6:00 PM" /></div>
+        <div><label>Price (Rs / month)</label><input id="acPrice" type="number" min="0" /></div>
+        <div><label>Category</label><input id="acCategory" placeholder="Cardio" /></div>
+        <div style="grid-column:1/-1;"><label>Short description</label><input id="acDesc" /></div>
+        <div><button class="btn-primary btn-small" onclick="adminAddClass()">Add class</button></div>
+      </div>
+    </div>`;
+}
+async function adminSaveClass(id) {
+  const c = classesData.find(x => x.id === id);
+  if (!c) return;
+  const time = document.getElementById("clsTime" + id).value.trim();
+  const price = Number(document.getElementById("clsPrice" + id).value);
+  if (!time) { alert("Schedule cannot be empty"); return; }
+  if (isNaN(price) || price < 0) { alert("Enter a valid price"); return; }
+  c.time = time; c.price = price;
+  if (window.gymSupabase) {
+    try {
+      const { error } = await window.gymSupabase.from("gym_classes").update({
+        time: time,
+        price: price,
+        updated_at: new Date().toISOString()
+      }).eq("id", id);
+      if (error) console.error("Could not update class in Supabase:", error);
+    } catch (e) { console.error(e); }
+  }
+  saveClasses();
+  renderAdmin();
+  renderClasses();
+}
+async function adminDeleteClass(id) {
+  const c = classesData.find(x => x.id === id);
+  if (!c) return;
+  if (!confirm("Delete " + c.title + "? Existing bookings stay in members' history.")) return;
+  if (window.gymSupabase) {
+    try {
+      const { error } = await window.gymSupabase.from("gym_classes").delete().eq("id", id);
+      if (error) console.error("Could not delete class from Supabase:", error);
+    } catch (e) { console.error(e); }
+  }
+  classesData = classesData.filter(x => x.id !== id);
+  saveClasses();
+  renderAdmin();
+  renderClasses();
+}
+async function adminAddClass() {
+  const title = document.getElementById("acTitle").value.trim();
+  const time = document.getElementById("acTime").value.trim();
+  const price = Number(document.getElementById("acPrice").value);
+  const category = document.getElementById("acCategory").value.trim() || "General";
+  const desc = document.getElementById("acDesc").value.trim() || "New class at PowerFit.";
+  if (!title || !time) { alert("Title and schedule are required"); return; }
+  if (isNaN(price) || price < 0 || document.getElementById("acPrice").value === "") { alert("Enter a valid price"); return; }
+  let newId = classesData.reduce((m, c) => Math.max(m, c.id), 0) + 1;
+  const newClassObj = { id: newId, title, time, price, capacity: 15, category, desc, img: defaultClasses[0].img, isActive: true };
+  if (window.gymSupabase) {
+    try {
+      const { data, error } = await window.gymSupabase.from("gym_classes").insert({
+        title,
+        time,
+        price,
+        capacity: 15,
+        category,
+        description: desc,
+        image_url: defaultClasses[0].img,
+        is_active: true
+      }).select();
+      if (error) {
+        console.error("Could not insert class into Supabase:", error);
+      } else if (data && data[0]) {
+        newClassObj.id = Number(data[0].id);
+      }
+    } catch (e) { console.error(e); }
+  }
+  classesData.push(newClassObj);
+  saveClasses();
+  renderAdmin();
+  renderClasses();
+  renderClassFilters();
+}
+
+/* =====================================================================
+   CUSTOMER INQUIRY CHAT
+   - Quick-reply buttons + typed questions get automatic answers
+   - "Talk to team" saves a message as an inquiry (shows in My Profile)
+   ===================================================================== */
+const chatChips = [
+  ["Timings", "timings"], ["Membership fees", "membership fees"], ["Classes", "classes"],
+  ["Trainers", "trainers"], ["Diet plans", "diet plans"], ["Fee payment", "payment help"],
+  ["Talk to team", "talk to team"]
+];
+let chatState = { step: null, draft: {} };
+
+function getChat() { return JSON.parse(localStorage.getItem("gym_chat") || "[]"); }
+function saveChat(c) { localStorage.setItem("gym_chat", JSON.stringify(c.slice(-60))); }
+
+function addChat(from, text) {
+  const c = getChat();
+  c.push({ from: from, text: text });
+  saveChat(c);
+  renderChat();
+}
+
+function renderChat() {
+  const box = document.getElementById("chatMessages");
+  box.innerHTML = getChat().map(m =>
+    m.from === "user" ? `<div class="msg user">${esc(m.text)}</div>` : `<div class="msg bot">${m.text}</div>`
+  ).join("");
+  box.scrollTop = box.scrollHeight;
+}
+
+function botSay(html, delay) {
+  const box = document.getElementById("chatMessages");
+  const t = document.createElement("div");
+  t.className = "msg bot typing"; t.textContent = "typing...";
+  box.appendChild(t); box.scrollTop = box.scrollHeight;
+  setTimeout(() => addChat("bot", html), delay == null ? 450 : delay);
+}
+
+function toggleChat() {
+  const panel = document.getElementById("chatPanel");
+  const opening = !panel.classList.contains("open");
+  panel.classList.toggle("open");
+  if (opening) {
+    if (getChat().length === 0) {
+      addChat("bot", "Hi! 👋 I'm the PowerFit assistant. Ask about timings, fees, classes, diet plans or payments, or tap an option below.");
+    } else {
+      renderChat();
+    }
+    document.getElementById("chatInput").focus();
+  }
+}
+
+function chatGo(page) {
+  document.getElementById("chatPanel").classList.remove("open");
+  navigate(page);
+}
+function chatLink(page, label) {
+  return `<a class="chat-link" onclick="chatGo('${page}')">${label}</a>`;
+}
+
+function chatQuick(text) {
+  document.getElementById("chatInput").value = text;
+  sendChat();
+}
+
+function startInquiry() {
+  chatState = { step: "msg", draft: {} };
+  botSay("Sure! Type your question or message for our team. (Type <b>cancel</b> to stop.)");
+}
+
+async function saveInquiry() {
+  const cu = getCurrentUser();
+  const d = chatState.draft;
+  const inqId = "IQ" + Date.now().toString().slice(-6);
+  const inq = {
+    id: inqId,
+    name: d.name, phone: d.phone || "", email: cu ? cu.email : "",
+    message: d.message, date: todayStr(), status: "Open", reply: "",
+    memberId: cu ? cu.id : null
+  };
+  const list = getInquiries();
+  list.unshift(inq);
+  saveInquiries(list);
+  chatState = { step: null, draft: {} };
+  botSay(`Thanks ${esc(inq.name)}! Your message is saved (ref <b>${inq.id}</b>). Our team will contact you soon.` +
+    (cu ? "<br>You can see it in " + chatLink("profile", "My Profile") + "." : ""));
+
+  if (window.gymSupabase) {
+    try {
+      const { error } = await window.gymSupabase.from("gym_inquiries").insert({
+        customer_name: d.name || (cu ? cu.name : "Guest"),
+        customer_phone: d.phone || "",
+        customer_email: cu ? cu.email : (d.email || null),
+        message: d.message,
+        inquiry_date: todayStr(),
+        status: "Open",
+        reply: null
+      });
+      if (error) console.warn("Supabase inquiry insert note:", error);
+    } catch (e) {
+      console.warn("Inquiry insert caught:", e);
+    }
+  }
+
+  if (document.querySelector('section[data-page="profile"]').classList.contains("active")) renderProfile();
+}
+
+function sendChat() {
+  const input = document.getElementById("chatInput");
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = "";
+  addChat("user", text);
+
+  // Leaving a message for the team (step-by-step)
+  if (chatState.step) {
+    if (text.toLowerCase() === "cancel") {
+      chatState = { step: null, draft: {} };
+      botSay("No problem, cancelled. Ask me anything else.");
+      return;
+    }
+    const cu = getFullUser();
+    if (chatState.step === "msg") {
+      chatState.draft.message = text;
+      if (cu) {
+        chatState.draft.name = cu.name;
+        chatState.draft.phone = cu.phone || "not given";
+        saveInquiry();
+      } else {
+        chatState.step = "name";
+        botSay("Got it. What is your name?");
+      }
+    } else if (chatState.step === "name") {
+      chatState.draft.name = text;
+      chatState.step = "phone";
+      botSay("Thanks. What phone number can we reach you on?");
+    } else if (chatState.step === "phone") {
+      if (!/^[0-9+\-\s]{8,15}$/.test(text)) {
+        botSay("That number doesn't look right. Enter 8 to 15 digits, or type <b>cancel</b>.");
+        return;
+      }
+      chatState.draft.phone = text;
+      saveInquiry();
+    }
+    return;
+  }
+
+  const reply = getBotReply(text);
+  if (reply === "TALK") startInquiry();
+  else botSay(reply);
+}
+
+function getBotReply(text) {
+  const t = text.toLowerCase();
+  const user = getFullUser();
+
+  if (/talk to team|human|agent|staff|call me|contact|complaint|shikayat|callback/.test(t)) return "TALK";
+
+  if (/(my|mera|meri|mere).*(plan|membership|booking|attendance|payment)/.test(t)) {
+    if (!user) return "Please " + chatLink("login", "log in") + " to see your plan, bookings and attendance.";
+    const today = todayStr();
+    const m = user.membership;
+    const bookings = getBookings().filter(b => b.email === user.email).length;
+    const days = new Set(getAttendance().filter(a => a.email === user.email && a.date.startsWith(today.slice(0, 7))).map(a => a.date)).size;
+    return `Hi ${esc(user.name)}!<br>Plan: <b>${m && m.end >= today ? esc(m.plan) + " (till " + fmtDate(m.end) + ")" : "none active"}</b><br>` +
+      `Booked classes: <b>${bookings}</b><br>Days attended this month: <b>${days}</b><br>` + chatLink("profile", "Open My Profile");
+  }
+
+  if (/^(hi|hello|hey|hii|namaste|hola)\b/.test(t)) return "Hello! 👋 How can I help you today?";
+  if (/thank|thanks|shukriya|dhanyavad/.test(t)) return "You're welcome! Anything else I can help with?";
+
+  if (/timing|time|open|close|hours|kab|schedule/.test(t)) {
+    return "<b>Gym hours</b><br>" + GYM_HOURS + "<br><br><b>Class timings</b><br>" +
+      classesData.map(c => esc(c.title) + ": " + esc(c.time)).join("<br>");
+  }
+  if (/fee|fees|price|pricing|cost|plan|membership|kitna|charges/.test(t)) {
+    return "<b>Membership plans (per month)</b><br>Basic: Rs " + planPrices.Basic + "<br>Pro: Rs " + planPrices.Pro +
+      " (all classes included)<br>Elite: Rs " + planPrices.Elite + " (personal trainer + diet plan)<br><br>" +
+      chatLink("pricing", "See plans and join");
+  }
+  if (/class|hiit|yoga|zumba|strength/.test(t)) {
+    return "<b>Our classes</b><br>" + classesData.map(c => esc(c.title) + " - Rs " + esc(c.price) + "/month").join("<br>") +
+      "<br>Pro and Elite members book classes free.<br><br>" + chatLink("classes", "Browse and book classes");
+  }
+  if (/trainer|coach|instructor/.test(t)) {
+    return "<b>Our trainers</b><br>" + trainersData.map(x => esc(x.name) + " - " + esc(x.role)).join("<br>") +
+      "<br>1-on-1 sessions cost Rs " + TRAINER_SESSION_FEE + " (free on Elite).<br><br>" + chatLink("trainers", "Meet the trainers");
+  }
+  if (/diet|nutrition|weight loss|weight gain|food|khana/.test(t)) {
+    return "We have sample <b>Weight Loss</b> and <b>Weight Gain</b> meal plans. The Elite plan includes a personal diet plan.<br><br>" + chatLink("diet", "View diet plans");
+  }
+  if (/refund/.test(t)) {
+    return "If you paid online and cancel a class from " + chatLink("profile", "My Profile") + ", the payment shows as <b>Refund pending</b> and our team will process it. For anything else, tap <b>Talk to team</b>.";
+  }
+  if (/pay|upi|card|cash|payment|net ?banking/.test(t)) {
+    return "You can pay for plans, classes and trainer sessions with <b>UPI, card or net banking</b>, or choose <b>Pay at gym</b> and pay at reception. Your payment status is listed in " + chatLink("profile", "My Profile") + ".";
+  }
+  if (/attend|check.?in|present/.test(t)) {
+    return "Open " + chatLink("profile", "My Profile") + ", then tap <b>Gym check-in</b> or <b>Mark attendance</b> on a booked class. Your monthly calendar and attendance % update automatically.";
+  }
+  if (/cancel/.test(t)) {
+    return "Go to " + chatLink("profile", "My Profile") + " > My bookings > <b>Cancel</b> next to the class.";
+  }
+  if (/join|register|sign ?up|book|admission|kaise/.test(t)) {
+    return "1) " + chatLink("register", "Create your account") + "<br>2) Choose a plan and pay<br>3) Book your classes<br>4) Show up and mark attendance<br><br>" + chatLink("join-process", "See the full process");
+  }
+
+  return "I'm not sure about that one. Tap <b>Talk to team</b> below or " + `<a class="chat-link" onclick="startInquiry()">leave a message</a>` + " and our staff will get back to you.";
+}
+
+/* ---------- init ---------- */
+document.getElementById("menuToggle").addEventListener("click", () => {
+  document.getElementById("navLinks").classList.toggle("open");
+});
+
+document.getElementById("chatChips").innerHTML =
+  chatChips.map(c => `<button onclick="chatQuick('${c[1]}')">${c[0]}</button>`).join("");
+
+// Razorpay live ho to window pehle se load kar lo (payment popup jaldi khulta hai)
+if (LIVE_RAZORPAY) loadRazorpay().catch(() => {});
+
+updateNavbar();
+navigate("home");
+</script>
+<script type="module" src="/src/supabase-init.js"></script>
+
+
+</body>
+</html>
