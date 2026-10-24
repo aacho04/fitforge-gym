@@ -456,6 +456,12 @@ values
   (4, 'Zumba Dance', 'Wed, Sat - 5:00 PM', 250, 18, 'Dance', 'Fun cardio dance workout to upbeat music.', 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=500', true)
 on conflict (id) do nothing;
 
+-- Ensure identity sequence is advanced past the max seeded id so subsequent inserts succeed
+select setval(
+  pg_get_serial_sequence('public.gym_classes', 'id'),
+  coalesce((select max(id) from public.gym_classes), 1)
+);
+
 alter table public.gym_classes enable row level security;
 grant select on public.gym_classes to anon, authenticated;
 grant insert, update, delete on public.gym_classes to authenticated;
@@ -485,7 +491,7 @@ create policy "Gym admins can delete classes"
 -- 2. GYM BOOKINGS (Which member joined which class)
 -- =====================================================================
 create table if not exists public.gym_bookings (
-  id text primary key,
+  id text primary key default ('BK-' || substr(gen_random_uuid()::text, 1, 8)),
   member_id uuid references public.gym_members (id) on delete set null,
   member_email text not null,
   member_name text not null default '',
@@ -497,6 +503,9 @@ create table if not exists public.gym_bookings (
   is_demo boolean not null default false,
   created_at timestamptz not null default now()
 );
+
+alter table public.gym_bookings
+  alter column id set default ('BK-' || substr(gen_random_uuid()::text, 1, 8));
 
 alter table public.gym_bookings
   add column if not exists member_name text not null default '';
@@ -549,7 +558,7 @@ create policy "Members cancel own bookings"
 -- 3. GYM TRAINER REQUESTS (1-on-1 personal session requests)
 -- =====================================================================
 create table if not exists public.gym_trainer_requests (
-  id text primary key,
+  id text primary key default ('TR-' || substr(gen_random_uuid()::text, 1, 8)),
   member_id uuid references public.gym_members (id) on delete set null,
   member_email text not null,
   trainer text not null,
@@ -562,6 +571,9 @@ create table if not exists public.gym_trainer_requests (
   is_demo boolean not null default false,
   created_at timestamptz not null default now()
 );
+
+alter table public.gym_trainer_requests
+  alter column id set default ('TR-' || substr(gen_random_uuid()::text, 1, 8));
 
 create index if not exists gym_trainer_requests_member_email_idx on public.gym_trainer_requests (member_email);
 
@@ -601,7 +613,7 @@ create policy "Gym admins delete trainer requests"
 -- 4. GYM INQUIRIES (Customer questions & chat messages)
 -- =====================================================================
 create table if not exists public.gym_inquiries (
-  id text primary key,
+  id text primary key default ('INQ-' || substr(gen_random_uuid()::text, 1, 8)),
   member_id uuid references public.gym_members (id) on delete set null,
   customer_name text not null,
   customer_phone text not null default '',
@@ -613,6 +625,9 @@ create table if not exists public.gym_inquiries (
   is_demo boolean not null default false,
   created_at timestamptz not null default now()
 );
+
+alter table public.gym_inquiries
+  alter column id set default ('INQ-' || substr(gen_random_uuid()::text, 1, 8));
 
 create index if not exists gym_inquiries_customer_email_idx on public.gym_inquiries (customer_email);
 
@@ -644,3 +659,232 @@ drop policy if exists "Gym admins delete inquiries" on public.gym_inquiries;
 create policy "Gym admins delete inquiries"
   on public.gym_inquiries for delete to authenticated
   using ((select auth.jwt() -> 'app_metadata' ->> 'role') = 'gym_admin');
+
+-- =====================================================================
+-- 5. GYM PAYMENTS
+-- =====================================================================
+create table if not exists public.gym_payments (
+  id text primary key default ('PF' || substr(gen_random_uuid()::text, 1, 8)),
+  member_id uuid references public.gym_members (id) on delete set null,
+  member_email text not null,
+  title text not null,
+  amount numeric not null default 0,
+  method text not null,
+  detail text not null default '',
+  status text not null default 'Pending',
+  kind text not null default '',
+  date date not null default current_date,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists gym_payments_member_email_idx on public.gym_payments (member_email);
+
+alter table public.gym_payments enable row level security;
+grant select, insert, update, delete on public.gym_payments to authenticated;
+
+drop policy if exists "Members read own payments" on public.gym_payments;
+create policy "Members read own payments"
+  on public.gym_payments for select to authenticated
+  using (
+    member_id = (select auth.uid())
+    or member_email = (select auth.jwt() ->> 'email')
+    or (select auth.jwt() -> 'app_metadata' ->> 'role') = 'gym_admin'
+  );
+
+drop policy if exists "Members insert own payments" on public.gym_payments;
+create policy "Members insert own payments"
+  on public.gym_payments for insert to authenticated
+  with check (
+    member_id = (select auth.uid())
+    or member_email = (select auth.jwt() ->> 'email')
+    or (select auth.jwt() -> 'app_metadata' ->> 'role') = 'gym_admin'
+  );
+
+drop policy if exists "Gym admins update payments" on public.gym_payments;
+create policy "Gym admins update payments"
+  on public.gym_payments for update to authenticated
+  using ((select auth.jwt() -> 'app_metadata' ->> 'role') = 'gym_admin')
+  with check ((select auth.jwt() -> 'app_metadata' ->> 'role') = 'gym_admin');
+
+drop policy if exists "Gym admins delete payments" on public.gym_payments;
+create policy "Gym admins delete payments"
+  on public.gym_payments for delete to authenticated
+  using ((select auth.jwt() -> 'app_metadata' ->> 'role') = 'gym_admin');
+
+-- =====================================================================
+-- 6. GYM ATTENDANCE
+-- =====================================================================
+create table if not exists public.gym_attendance (
+  id text primary key default ('ATT-' || substr(gen_random_uuid()::text, 1, 8)),
+  member_id uuid references public.gym_members (id) on delete set null,
+  member_name text not null default '',
+  member_email text not null,
+  date date not null default current_date,
+  time text not null default '',
+  ref text not null default 'gym',
+  type text not null default 'Gym',
+  label text not null default 'Gym visit',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists gym_attendance_member_email_idx on public.gym_attendance (member_email);
+create index if not exists gym_attendance_date_idx on public.gym_attendance (date);
+
+alter table public.gym_attendance enable row level security;
+grant select, insert, delete on public.gym_attendance to authenticated;
+
+drop policy if exists "Members read own attendance" on public.gym_attendance;
+create policy "Members read own attendance"
+  on public.gym_attendance for select to authenticated
+  using (
+    member_id = (select auth.uid())
+    or member_email = (select auth.jwt() ->> 'email')
+    or (select auth.jwt() -> 'app_metadata' ->> 'role') = 'gym_admin'
+  );
+
+drop policy if exists "Members insert own checkins" on public.gym_attendance;
+create policy "Members insert own checkins"
+  on public.gym_attendance for insert to authenticated
+  with check (
+    member_id = (select auth.uid())
+    or member_email = (select auth.jwt() ->> 'email')
+    or (select auth.jwt() -> 'app_metadata' ->> 'role') = 'gym_admin'
+  );
+
+drop policy if exists "Gym admins delete attendance" on public.gym_attendance;
+create policy "Gym admins delete attendance"
+  on public.gym_attendance for delete to authenticated
+  using ((select auth.jwt() -> 'app_metadata' ->> 'role') = 'gym_admin');
+
+-- ============================================================================
+-- FITFORGE EXPANDED ENTITIES: PLANS, WORKOUTS, PROGRESS, TRAINERS & NUTRITION
+-- ============================================================================
+
+-- 7. MEMBERSHIP PLANS (Admin created & customizable)
+create table if not exists public.gym_plans (
+  id text primary key,
+  title text not null,
+  price integer not null,
+  duration_months integer not null default 1,
+  description text not null default '',
+  perks text[] not null default '{}',
+  is_featured boolean not null default false,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+alter table public.gym_plans enable row level security;
+grant select on public.gym_plans to anon, authenticated;
+grant all on public.gym_plans to authenticated;
+
+drop policy if exists "Anyone can read active gym plans" on public.gym_plans;
+create policy "Anyone can read active gym plans"
+  on public.gym_plans for select to anon, authenticated
+  using (is_active = true or (select auth.jwt() -> 'app_metadata' ->> 'role') = 'gym_admin');
+
+drop policy if exists "Gym admins manage plans" on public.gym_plans;
+create policy "Gym admins manage plans"
+  on public.gym_plans for all to authenticated
+  using ((select auth.jwt() -> 'app_metadata' ->> 'role') = 'gym_admin');
+
+-- 8. WORKOUT LIBRARY & ROUTINES
+create table if not exists public.gym_workouts (
+  id text primary key,
+  title text not null,
+  category text not null, -- 'Strength', 'Hypertrophy', 'HIIT', 'Fat Loss', 'Endurance', 'Beginner'
+  split_type text not null default 'Full Body', -- 'Push Pull Legs', 'Upper Lower', 'Full Body', 'Isolated'
+  difficulty text not null default 'Intermediate', -- 'Beginner', 'Intermediate', 'Advanced'
+  duration_minutes integer not null default 45,
+  target_muscles text[] not null default '{}',
+  exercises jsonb not null default '[]'::jsonb,
+  created_by text not null default 'FitForge Team',
+  created_at timestamptz not null default now()
+);
+
+alter table public.gym_workouts enable row level security;
+grant select on public.gym_workouts to anon, authenticated;
+grant all on public.gym_workouts to authenticated;
+
+-- 9. MEMBER WORKOUT SESSIONS & LOGS
+create table if not exists public.gym_workout_logs (
+  id uuid primary key default gen_random_uuid(),
+  member_id uuid references public.gym_members (id) on delete cascade,
+  member_email text not null,
+  workout_id text not null,
+  workout_title text not null,
+  duration_minutes integer not null default 0,
+  total_volume_kg numeric not null default 0,
+  exercise_logs jsonb not null default '[]'::jsonb,
+  logged_at timestamptz not null default now()
+);
+
+create index if not exists gym_workout_logs_member_email_idx on public.gym_workout_logs (member_email);
+create index if not exists gym_workout_logs_logged_at_idx on public.gym_workout_logs (logged_at desc);
+
+alter table public.gym_workout_logs enable row level security;
+grant select, insert, delete on public.gym_workout_logs to authenticated;
+
+drop policy if exists "Members read own workout logs" on public.gym_workout_logs;
+create policy "Members read own workout logs"
+  on public.gym_workout_logs for select to authenticated
+  using (member_email = (select auth.jwt() ->> 'email') or (select auth.jwt() -> 'app_metadata' ->> 'role') in ('gym_admin', 'trainer'));
+
+drop policy if exists "Members insert own workout logs" on public.gym_workout_logs;
+create policy "Members insert own workout logs"
+  on public.gym_workout_logs for insert to authenticated
+  with check (member_email = (select auth.jwt() ->> 'email'));
+
+-- 10. BODY PROGRESS RECORDS (Measurements & Trends)
+create table if not exists public.gym_progress_records (
+  id uuid primary key default gen_random_uuid(),
+  member_id uuid references public.gym_members (id) on delete cascade,
+  member_email text not null,
+  date date not null default current_date,
+  weight numeric not null,
+  waist_inches numeric,
+  chest_inches numeric,
+  hips_inches numeric,
+  notes text default '',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists gym_progress_records_member_email_idx on public.gym_progress_records (member_email);
+alter table public.gym_progress_records enable row level security;
+grant select, insert, delete on public.gym_progress_records to authenticated;
+
+drop policy if exists "Members read own progress records" on public.gym_progress_records;
+create policy "Members read own progress records"
+  on public.gym_progress_records for select to authenticated
+  using (member_email = (select auth.jwt() ->> 'email') or (select auth.jwt() -> 'app_metadata' ->> 'role') in ('gym_admin', 'trainer'));
+
+drop policy if exists "Members insert own progress records" on public.gym_progress_records;
+create policy "Members insert own progress records"
+  on public.gym_progress_records for insert to authenticated
+  with check (member_email = (select auth.jwt() ->> 'email'));
+
+-- 11. TRAINER ASSIGNED WORKOUTS
+create table if not exists public.gym_trainer_assignments (
+  id uuid primary key default gen_random_uuid(),
+  trainer_email text not null,
+  trainer_name text not null,
+  member_email text not null,
+  member_name text not null,
+  workout_title text not null,
+  notes text default '',
+  status text not null default 'Active', -- 'Active', 'Completed', 'Archived'
+  assigned_at timestamptz not null default now()
+);
+
+alter table public.gym_trainer_assignments enable row level security;
+grant select, insert, update, delete on public.gym_trainer_assignments to authenticated;
+
+-- Seed default initial plans if not already present
+insert into public.gym_plans (id, title, price, duration_months, description, perks, is_featured)
+values
+  ('Basic', 'Basic Foundation', 3000, 1, 'Essential gym access with standard equipment and locker rooms.', array['Full gym floor access', 'Locker room & showers', '2 Group classes / month', 'Fitness onboarding guide'], false),
+  ('Pro', 'Pro Performance', 5000, 1, 'The most popular plan for dedicated lifters and group training enthusiasts.', array['Unlimited 24/7 gym access', 'Unlimited group classes (HIIT, Yoga, Zumba)', '1 Trainer consultation / week', 'Personalized nutrition guide', 'Steam & sauna access'], true),
+  ('Elite', 'Elite Transformation', 8000, 1, 'Complete all-inclusive access with dedicated trainer and diet counseling.', array['Unlimited all gym areas', 'Dedicated 1-on-1 personal trainer', 'Custom bespoke Indian diet plan', 'Weekly body composition scanning', 'All premium classes included', 'Priority booking'], false)
+on conflict (id) do update
+set price = excluded.price,
+    description = excluded.description,
+    perks = excluded.perks;

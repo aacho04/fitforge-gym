@@ -1,11 +1,29 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabasePublishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || ''
+const supabasePublishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || ''
 
-if (!supabaseUrl || !supabasePublishableKey) {
-  throw new Error('Set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY in .env.')
+const isConfigured = Boolean(
+  supabaseUrl &&
+  supabasePublishableKey &&
+  !supabaseUrl.includes('your-project-ref') &&
+  !supabasePublishableKey.includes('your-supabase-publishable-key')
+)
+
+window.isSupabaseConfigured = isConfigured
+
+if (isConfigured) {
+  try {
+    window.gymSupabase = createClient(supabaseUrl, supabasePublishableKey)
+  } catch (err) {
+    console.warn('Could not initialize Supabase client:', err)
+    window.gymSupabase = null
+    window.isSupabaseConfigured = false
+  }
+} else {
+  window.gymSupabase = null
+  console.info('PowerFit: Running in Local Demo Mode (configure .env with real Supabase credentials to sync with database).')
 }
 
-window.gymSupabase = createClient(supabaseUrl, supabasePublishableKey)
 window.initializeGymSupabase?.()
+
